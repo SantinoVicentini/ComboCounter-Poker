@@ -42,19 +42,60 @@ var dosxo = [];
 
 
 function suited(){
-    let hand = [];
-    let vr = [];
     for(let i = 0; i < deck.length ; i++){
-        for(let j=4; j < deck.length ; j=j+4){
+        for(let j=i+4; j < deck.length ; j=j+4){
+            let hand = [];
+            let vr = [];
             hand.push(deck[i]);
             hand.push(deck[j]);
             vr.push(hand);
-            console.log(vr)
-            hand = [];
-            console.log(hand)
+            if(i < 4){
+                Axs.push(vr);
+            }
+            else if(i >= 4 && i < 8){
+                Kxs.push(vr);
+            }
+            else if(i >= 8 && i < 12){
+                Qxs.push(vr);
+            }
+            else if(i >= 12 && i < 16){
+                Jxs.push(vr);
+            }
+            else if(i >= 16 && i < 20){
+                Txs.push(vr);
+            }
+            else if(i >= 20 && i < 24){
+                nuevexs.push(vr);
+            }
+            else if(i >= 24 && i < 28){
+                ochoxs.push(vr);
+            }
+            else if(i >= 28 && i < 32){
+                sietexs.push(vr);
+            }
+            else if(i >= 32 && i < 36){
+                seisxs.push(vr);
+            }
+            else if(i >= 36 && i < 40){
+                cincoxs.push(vr);
+            }
+            else if(i >= 40 && i < 44){
+                cuatroxs.push(vr);
+            }
+            else if(i >= 44 && i < 48){
+                tresxs.push(vr);
+            }
+            else{
+                dosxs.push(vr);
+            }
         }
-        Axs.push[vr];
     }
 }
 
 suited()
+
+console.log(Axs)
+console.log(Kxs)
+console.log(dosxs)
+
+
