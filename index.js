@@ -12,90 +12,203 @@ const deck = ['Ah', 'As', 'Ad', 'Ac',
               '3h', '3s', '3d', '3c',
               '2h', '2s', '2d', '2c'];
 
-var Axs = [];
-var Kxs = [];
-var Qxs = [];
-var Jxs = [];
-var Txs = [];
-var nuevexs = [];
-var ochoxs = [];
-var sietexs = [];
-var seisxs = [];
-var cincoxs = [];
-var cuatroxs = [];
-var tresxs = [];
-var dosxs = [];
+const clubs = ['Ac', 'Kc', 'Qc','Jc','Tc','9c','8c','7c','6c','5c','4c','3c','2c'];
+const diamonds = ['Ad', 'Kd', 'Qd','Jd','Td','9d','8d','7d','6d','5d','4d','3d','2d'];
+const spades = ['As', 'Ks', 'Qs','Js','Ts','9s','8s','7s','6s','5s','4s','3s','2s'];
+const hearts = ['Ah', 'Kh', 'Qh','Jh','Th','9h','8h','7h','6h','5h','4h','3h','2h'];
 
-var Axo = [];
-var Kxo = [];
-var Qxo = [];
-var Jxo = [];
-var Txo = [];
-var nuevexo = [];
-var ochoxo = [];
-var sietexo = [];
-var seisxo = [];
-var cincoxo = [];
-var cuatroxo = [];
-var tresxo = [];
-var dosxo = [];
+function combos(hand){
+    var combos = [];
 
+    // Si la mano es suited
+    if(hand.includes('s')){
+        for(let i = 0; i < clubs.length ; i++){
+        let actualHand = [];
+        if(hand[0] == clubs[i][0]){
+            for(let j = 0; j < clubs.length; j++){
+                if(hand[1] == clubs[j][0]){
+                    actualHand.push(clubs[i]);
+                    actualHand.push(clubs[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
 
-function suited(){
-    for(let i = 0; i < deck.length ; i++){
-        for(let j=i+4; j < deck.length ; j=j+4){
-            let hand = [];
-            let vr = [];
-            hand.push(deck[i]);
-            hand.push(deck[j]);
-            vr.push(hand);
-            if(i < 4){
-                Axs.push(vr);
-            }
-            else if(i >= 4 && i < 8){
-                Kxs.push(vr);
-            }
-            else if(i >= 8 && i < 12){
-                Qxs.push(vr);
-            }
-            else if(i >= 12 && i < 16){
-                Jxs.push(vr);
-            }
-            else if(i >= 16 && i < 20){
-                Txs.push(vr);
-            }
-            else if(i >= 20 && i < 24){
-                nuevexs.push(vr);
-            }
-            else if(i >= 24 && i < 28){
-                ochoxs.push(vr);
-            }
-            else if(i >= 28 && i < 32){
-                sietexs.push(vr);
-            }
-            else if(i >= 32 && i < 36){
-                seisxs.push(vr);
-            }
-            else if(i >= 36 && i < 40){
-                cincoxs.push(vr);
-            }
-            else if(i >= 40 && i < 44){
-                cuatroxs.push(vr);
-            }
-            else if(i >= 44 && i < 48){
-                tresxs.push(vr);
-            }
-            else{
-                dosxs.push(vr);
+                    actualHand.push(diamonds[i]);
+                    actualHand.push(diamonds[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(spades[i]);
+                    actualHand.push(spades[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(hearts[i]);
+                    actualHand.push(hearts[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+                }
             }
         }
+        }
     }
+
+    // si la mano es off
+    if(hand.includes('o')){
+        for(let i = 0; i < clubs.length ; i++){
+        let actualHand = [];
+        if(hand[0] == clubs[i][0]){
+            for(let j = 0; j < clubs.length; j++){
+                if(hand[1] == clubs[j][0]){
+                    actualHand.push(clubs[i]);
+                    actualHand.push(diamonds[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(clubs[i]);
+                    actualHand.push(spades[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(clubs[i]);
+                    actualHand.push(hearts[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(diamonds[i]);
+                    actualHand.push(clubs[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(diamonds[i]);
+                    actualHand.push(spades[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(diamonds[i]);
+                    actualHand.push(hearts[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(spades[i]);
+                    actualHand.push(clubs[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(spades[i]);
+                    actualHand.push(diamonds[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(spades[i]);
+                    actualHand.push(hearts[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(hearts[i]);
+                    actualHand.push(clubs[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(hearts[i]);
+                    actualHand.push(spades[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+
+                    actualHand.push(hearts[i]);
+                    actualHand.push(diamonds[j]);
+                    combos.push(actualHand);
+                    actualHand = [];
+                }
+            }
+        }
+        }
+    }
+
+    // si la mano es pocket pair
+    if(hand.length == 2){
+        for(let i = 0; i < clubs.length ; i++){
+        let actualHand = [];
+        if(hand[0] == clubs[i][0]){
+            actualHand.push(clubs[i]);
+            actualHand.push(hearts[i]);
+            combos.push(actualHand);
+            actualHand = [];
+
+            actualHand.push(clubs[i]);
+            actualHand.push(diamonds[i]);
+            combos.push(actualHand);
+            actualHand = [];
+
+            actualHand.push(clubs[i]);
+            actualHand.push(spades[i]);
+            combos.push(actualHand);
+            actualHand = [];
+
+            actualHand.push(hearts[i]);
+            actualHand.push(diamonds[i]);
+            combos.push(actualHand);
+            actualHand = [];
+
+            actualHand.push(hearts[i]);
+            actualHand.push(spades[i]);
+            combos.push(actualHand);
+            actualHand = [];
+
+            actualHand.push(spades[i]);
+            actualHand.push(diamonds[i]);
+            combos.push(actualHand);
+            actualHand = [];
+        }
+        }
+    }
+
+    return combos;
 }
 
-suited()
+var combosSeleccionados = {};
 
-console.log(Axs)
-console.log(Kxs)
-console.log(dosxs)
+function sumCombos(hand){
+    var total = 0;
+    var count = combos(hand);
+    for(let i = 0; i < count.length; i++){
+        total++;
+    }
+    return total
+}
 
+function toggleCombo(hand) {
+    if (combosSeleccionados.hasOwnProperty(hand)) {
+      delete combosSeleccionados[hand];
+    } else {
+      combosSeleccionados[hand] = true;
+    }
+    actualizarTotal();
+  }
 
+  function actualizarTotal() {
+    var totalElement = document.getElementById("total");
+    var total = 0;
+  
+    for (var hand in combosSeleccionados) {
+      if (combosSeleccionados.hasOwnProperty(hand)) {
+        total += sumCombos(hand);
+      }
+    }
+  
+    totalElement.innerHTML = total + 'en rango preflop';
+  }
+
+console.log(combos('99'));
+console.log(sumCombos('AKs'));
+
+// disenio
+
+function toggleColor(element) {
+    if (element.classList.contains("pairs")) {
+        element.classList.toggle("selected-pairs");
+    } else if (element.classList.contains("suited")) {
+        element.classList.toggle("selected-suited");
+    } else if (element.classList.contains("offsuited")) {
+        element.classList.toggle("selected-offsuited");
+    }
+}
