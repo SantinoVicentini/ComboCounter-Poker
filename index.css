@@ -9,6 +9,14 @@ body {
     color: #FFFFFF;
 }
 
+.container{
+    display: flex;
+}
+
+.board{
+    margin-left: 5%;
+}
+
 table {
     border-spacing: 5px;
 }
@@ -22,6 +30,34 @@ td {
     border-radius: 4px;
     color: rgb(0, 0, 0);
     cursor: pointer;
+}
+
+.range-text{
+    margin-top: 3%;
+    justify-content: space-around;
+    display: flex;
+}
+
+.clear{
+    margin-top: 2%;
+    height: 30px;
+    width: 150px;
+    border-radius: 6px;
+    background-color: #5484FF;
+    box-shadow: 0 0 20px #000000;
+    color: #FFFFFF;
+}
+
+.board-text{
+    margin-top: 9%;
+    justify-content: center;
+    display: flex;
+}
+
+.board-text .clear{
+    position: absolute;
+    margin-left: 43%;
+    margin-top: -9%;
 }
 
 .pairs{
@@ -46,4 +82,114 @@ td {
 
 .selected-offsuited {
     background-color: rgb(255, 45, 45);
+}
+
+.heart{
+    background-color: rgb(88, 19, 19);
+}
+
+.club{
+    background-color: rgba(35, 77, 35, 0.699);
+}
+
+.diamond{
+    background-color: rgba(30, 60, 99, 0.7);
+}
+
+.spade{
+    background-color: rgba(85, 85, 85, 0.699);
+}
+
+.selected-heart{
+    background-color: rgb(255, 45, 45) ;
+}
+
+.selected-club{
+    background-color: rgb(122, 255, 122) ;
+}
+
+.selected-diamond{
+    background-color: rgba(69, 150, 255, 1) ;
+}
+
+.selected-spade{
+    background-color: rgba(255, 255, 255, 0.699) ;
+}
+
+.board-container{
+    margin-left: 5%;
+    margin-top: 10%;
+    height: 100px;
+    width: 500px;
+    background-color: #232323;
+    border-radius: 4px;
+    box-shadow: 0 0 30px #000000;
+    justify-content: space-around;
+    align-items: center;
+    display: flex;
+}
+
+.flop1{
+    height: 80px;
+    width: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flop1 img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.flop2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    width: 80px;
+}
+
+.flop2 img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.flop3{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    width: 80px;
+}
+
+.flop3 img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.turn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    width: 80px;
+}
+
+.turn img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.river{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    width: 80px;
+}
+
+.river img {
+    max-width: 100%;
+    max-height: 100%;
 }

@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
+    <div class="container">
+        <div class="range-container">
     <table>
         <tbody>
             <!-- Filas -->
@@ -222,7 +224,109 @@
             <!-- ... -->
         </tbody>
     </table>
-    <p id="total"></p>
+
+    <div class="range-text">
+        <p id="total">0 combos en rango preflop</p>
+        <button class="clear" onclick="clearSelectionAndUpdateTotal()">CLEAR</button>
+    </div>
+
+</div>
+    <div class="board">
+    <table>
+        <tbody>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/A heart.png');">Ah</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/A clubs.png');">Ac</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/A diamond.png');">Ad</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/A spade.png');">As</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/K heart.png');">Kh</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/K clubs.png');">Kc</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/K diamond.png');">Kd</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/K spade.png');">Ks</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/Q heart.png');">Qh</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/Q clubs.png');">Qc</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/Q diamond.png');">Qd</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/Q spade.png');">Qs</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/J heart.png');">Jh</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/J clubs.png');">Jc</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/J diamond.png');">Jd</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/J spade.png');">Js</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/10 heart.png');">Th</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/10 clubs.png');">Tc</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/10 diamond.png');">Td</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/10 spade.png');">Ts</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/9 heart.png');">9h</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/9 clubs.png');">9c</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/9 diamond.png');">9d</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/9 spade.png');">9s</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/8 heart.png');">8h</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/8 clubs.png');">8c</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/8 diamond.png');">8d</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/8 spade.png');">8s</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/7 heart.png');">7h</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/7 clubs.png');">7c</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/7 diamond.png');">7d</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/7 spade.png');">7s</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/6 heart.png');">6h</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/6 clubs.png');">6c</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/6 diamond.png');">6d</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/6 spade.png');">6s</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/5 heart.png');">5h</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/5 clubs.png');">5c</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/5 diamond.png');">5d</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/5 spade.png');">5s</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/4 heart.png');">4h</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/4 clubs.png');">4c</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/4 diamond.png');">4d</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/4 spade.png');">4s</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/3 heart.png');">3h</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/3 clubs.png');">3c</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/3 diamond.png');">3d</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/3 spade.png');">3s</td>
+            </tr>
+            <tr id="table">
+                <td class="heart" onclick="toggleColorCard(this); toggleImage(this, '/images/2 heart.png');">2h</td>
+                <td class="club" onclick="toggleColorCard(this); toggleImage(this, '/images/2 clubs.png');">2c</td>
+                <td class="diamond" onclick="toggleColorCard(this); toggleImage(this, '/images/2 diamond.png');">2d</td>
+                <td class="spade" onclick="toggleColorCard(this); toggleImage(this, '/images/2 spade.png');">2s</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="board-text">
+        <p>BOARD</p>
+        <button class="clear" onclick="clearSelectionAndImages()">CLEAR</button>
+    </div>
+    </div>
+    <div class="board-container">
+        <div class="flop1"></div>
+        <div class="flop2"></div>
+        <div class="flop3"></div>
+        <div class="turn"></div>
+        <div class="river"></div>
+    </div>
+    </div>
     <script src="index.js"></script>
 </body>
 </html>

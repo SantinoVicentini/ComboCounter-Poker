@@ -195,11 +195,96 @@ function toggleCombo(hand) {
       }
     }
   
-    totalElement.innerHTML = total + 'en rango preflop';
+    totalElement.innerHTML = total + ' combos en rango preflop';
   }
 
-console.log(combos('99'));
-console.log(sumCombos('AKs'));
+var flopDivs = {
+    flop1: document.querySelector(".flop1"),
+    flop2: document.querySelector(".flop2"),
+    flop3: document.querySelector(".flop3"),
+    turn: document.querySelector(".turn"),
+    river: document.querySelector(".river")
+};
+
+function toggleImage(element, imagePath) {
+    var nextDivId = getNextAvailableDivId();
+
+    if (nextDivId) {
+        var nextDiv = flopDivs[nextDivId];
+        var currentImage = nextDiv.querySelector("img");
+
+        if (element.classList.contains("selected")) {
+            element.classList.remove("selected");
+            nextDiv.removeChild(currentImage);
+        } else {
+            if (currentImage) {
+                nextDiv.removeChild(currentImage);
+            }
+
+            var cardImage = document.createElement("img");
+            cardImage.src = imagePath;
+            nextDiv.appendChild(cardImage);
+            element.classList.add("selected");
+        }
+    }
+}
+
+function getNextAvailableDivId() {
+    var divIds = Object.keys(flopDivs);
+
+    for (var i = 0; i < divIds.length; i++) {
+        var divId = divIds[i];
+        if (!flopDivs[divId].querySelector("img")) {
+            return divId;
+        }
+    }
+
+    return null;
+}
+
+function clearSelectionAndUpdateTotal() {
+    var cellsPairs = document.querySelectorAll("#table td.selected-pairs");
+    var cellsSuited = document.querySelectorAll("#table td.selected-suited");
+    var cellsOffsuited = document.querySelectorAll("#table td.selected-offsuited");
+
+    var cells = [...cellsPairs, ...cellsSuited, ...cellsOffsuited];
+
+    for (var i = 0; i < cells.length; i++) {
+        var hand = cells[i].innerHTML;
+        var cellClass = cells[i].className;
+
+        // Eliminar la clase "selected" de la celda
+        cells[i].classList.remove("selected");
+
+        // Eliminar todas las clases seleccionadas
+        cells[i].classList.remove("selected-pairs", "selected-suited", "selected-offsuited");
+
+        toggleCombo(hand);
+    }
+}
+
+function clearSelectionAndImages() {
+    var selectedCells = document.querySelectorAll("#table td.selected");
+
+    for (var i = 0; i < selectedCells.length; i++) {
+        var cell = selectedCells[i];
+        cell.classList.remove("selected");
+    }
+
+    var flopDivIds = Object.keys(flopDivs);
+
+    for (var j = 0; j < flopDivIds.length; j++) {
+        var divId = flopDivIds[j];
+        var div = flopDivs[divId];
+        var currentImage = div.querySelector("img");
+
+        if (currentImage) {
+            div.removeChild(currentImage);
+        }
+    }
+}
+
+
 
 // disenio
 
@@ -212,3 +297,16 @@ function toggleColor(element) {
         element.classList.toggle("selected-offsuited");
     }
 }
+
+function toggleColorCard(element) {
+    if (element.classList.contains("heart")) {
+        element.classList.toggle("selected-heart");
+    } else if (element.classList.contains("club")) {
+        element.classList.toggle("selected-club");
+    } else if (element.classList.contains("diamond")) {
+        element.classList.toggle("selected-diamond");
+    } else if (element.classList.contains('spade')) {
+        element.classList.toggle('selected-spade');
+    }
+}
+
