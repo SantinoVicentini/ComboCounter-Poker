@@ -166,6 +166,7 @@ function combos(hand){
 }
 
 var combosSeleccionados = {};
+var combosPorMano = {};
 
 function sumCombos(hand){
     var total = 0;
@@ -176,6 +177,7 @@ function sumCombos(hand){
     return total
 }
 
+// agregar combos por mano
 function toggleCombo(hand) {
     if (combosSeleccionados.hasOwnProperty(hand)) {
       delete combosSeleccionados[hand];
@@ -213,21 +215,21 @@ function toggleImage(element, imagePath) {
         var nextDiv = flopDivs[nextDivId];
         var currentImage = nextDiv.querySelector("img");
 
-        if (element.classList.contains("selected")) {
-            element.classList.remove("selected");
+        // Eliminar cualquier imagen existente en el div de destino
+        if (currentImage) {
             nextDiv.removeChild(currentImage);
-        } else {
-            if (currentImage) {
-                nextDiv.removeChild(currentImage);
-            }
-
-            var cardImage = document.createElement("img");
-            cardImage.src = imagePath;
-            nextDiv.appendChild(cardImage);
-            element.classList.add("selected");
         }
+
+        // Agregar una nueva imagen al div de destino
+        var cardImage = document.createElement("img");
+        cardImage.src = imagePath;
+        nextDiv.appendChild(cardImage);
+
+        // Cambiar la clase "selected" en la celda
+        element.classList.toggle("selected");
     }
 }
+
 
 function getNextAvailableDivId() {
     var divIds = Object.keys(flopDivs);
@@ -263,28 +265,77 @@ function clearSelectionAndUpdateTotal() {
     }
 }
 
-function clearSelectionAndImages() {
-    var selectedCells = document.querySelectorAll("#table td.selected");
+var boardSeleccionado = {};
 
-    for (var i = 0; i < selectedCells.length; i++) {
-        var cell = selectedCells[i];
-        cell.classList.remove("selected");
-    }
-
-    var flopDivIds = Object.keys(flopDivs);
-
-    for (var j = 0; j < flopDivIds.length; j++) {
-        var divId = flopDivIds[j];
-        var div = flopDivs[divId];
-        var currentImage = div.querySelector("img");
-
-        if (currentImage) {
-            div.removeChild(currentImage);
-        }
-    }
+function addBoard(card){
+    if (boardSeleccionado.hasOwnProperty(card)) {
+        delete boardSeleccionado[card];
+      } else {
+        boardSeleccionado[card] = true;
+      }
 }
 
+function clearSelectionAndImages() {
+    var selectedCells = document.querySelectorAll("#table td.selected-heart, #table td.selected-club, #table td.selected-diamond, #table td.selected-spade");
+  
+    for (var i = 0; i < selectedCells.length; i++) {
+      var cell = selectedCells[i];
+      cell.classList.remove("selected-heart", "selected-club", "selected-diamond", "selected-spade");
+    }
+  
+    var flopDivIds = Object.keys(flopDivs);
+  
+    for (var j = 0; j < flopDivIds.length; j++) {
+      var divId = flopDivIds[j];
+      var div = flopDivs[divId];
+      var currentImage = div.querySelector("img");
+  
+      if (currentImage) {
+        div.removeChild(currentImage);
+      }
+    }
+  
+    Object.keys(boardSeleccionado).forEach(function(card) {
+      delete boardSeleccionado[card];
+    });
+  }
+  
+// combos por mano
+function discountCombos(){
+    var totalElement = document.getElementById("total");
+    var total = 0;
+  
+    for (var hand in combosSeleccionados) {
+      if (combosSeleccionados.hasOwnProperty(hand)) {
+        total += sumCombos(hand);
+      }
+    }
 
+    for(let i = 0; i < Object.keys(boardSeleccionado).length; i++){
+        for(let j = 0; j < Object.keys(combosSeleccionados).length; j++){
+            if((Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(0) || Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(1))
+            && Object.keys(combosSeleccionados)[j].includes('s')){
+                delete combosSeleccionados[j];
+                total = total - 1;
+
+            }
+            if((Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(0) || Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(1)) 
+            && Object.keys(combosSeleccionados)[j].includes('o')){
+                delete combosSeleccionados[j];
+                total = total - 3;
+
+            }
+            if((Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(0) || Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(1))
+             && Object.keys(combosSeleccionados)[j].length == 2){
+                delete combosSeleccionados[j];
+                total = total - 3;
+
+            }
+        }
+    }
+    
+    totalElement.innerHTML = total + ' combos en rango preflop';
+}
 
 // disenio
 
