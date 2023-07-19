@@ -375,6 +375,40 @@ function set(){
 }
 */
 
+function findTrios() {
+    var trioCombos = [];
+    var selectedCards = Object.keys(boardSeleccionado);
+  
+    // Iterar por cada conjunto de combos
+    for (var hand in combosPorMano) {
+      if (combosPorMano.hasOwnProperty(hand)) {
+        var combos = combosPorMano[hand][0];
+        var matchingCount = 0;
+  
+        // Verificar cuántas cartas del combo tienen el primer carácter coincidente con alguna clave en boardSeleccionado
+        for (var i = 0; i < combos.length; i++) {
+          if (selectedCards.some(function(card) {
+            return card[0] === combos[i][0][0] || card[0] === combos[i][1][0] // Comparar primer carácter
+          })) {
+            matchingCount++;
+          }
+        }
+        // Si hay al menos tres cartas del combo en el board, es un trío
+        if (matchingCount >= 2) {
+          trioCombos.push(combos);
+        }
+      }
+    }
+    console.log(trioCombos)
+    return trioCombos;
+}
+  
+  
+
+  // Ejemplo de uso:
+  
+  
+
 // disenio
 
 function toggleColor(element) {
