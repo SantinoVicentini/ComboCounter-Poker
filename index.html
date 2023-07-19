@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>visualizer</title>
     <link rel="stylesheet" href="index.css">
-</head>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css'>
 <body>
     <div class="container">
         <div class="range-container">
@@ -327,6 +327,53 @@
         <div class="river"></div>
     </div>
 
+    <div class="filters">
+        <button class="straight">
+        <i class="fi fi-sr-filter"></i>
+        straight
+        </button>
+        <button class="set">
+        <i class="fi fi-sr-filter"></i>
+        set
+        </button>
+        <button class="two-pair">
+        <i class="fi fi-sr-filter"></i>
+        two pair
+        </button>
+        <button class="overpair">
+        <i class="fi fi-sr-filter"></i>
+        overpair
+        </button>
+        <button class="top-pair">
+        <i class="fi fi-sr-filter"></i>
+        top pair
+        </button>
+        <button class="pp-<-top-card">
+        <i class="fi fi-sr-filter"></i>
+        pp < top card
+        </button>
+        <button class="middle-pair">
+        <i class="fi fi-sr-filter"></i>
+        middle pair
+        </button>
+        <button class="pp-<-2nd-card">
+        <i class="fi fi-sr-filter"></i>
+        pp < 2nd card
+        </button>
+        <button class="weak-pair">
+        <i class="fi fi-sr-filter"></i>
+        weak pair
+        </button>
+        <button class="ace-high">
+        <i class="fi fi-sr-filter"></i>
+        ace high
+        </button>
+        <button class="nothing">
+        <i class="fi fi-sr-filter"></i>
+        nothing
+        </button>
+    </div>
+
     <div class="dead-cards">
         <table>
             <tbody>
@@ -410,6 +457,10 @@
                 </tr>
             </tbody>
         </table>
+
+        <div class="dead-cards-text">
+            <p>MY HAND</p>
+        </div>
     </div>
     </div>
     <script src="index.js"></script>

@@ -354,9 +354,26 @@ function discountCombos() {
   
     totalElement.innerHTML = total + ' combos en rango preflop';
   }
-  
-  
-  
+
+/*
+function set(){
+    var total = 0;
+    for(var card in boardSeleccionado){
+        for(var hand in combosSeleccionados){
+            if(card[0] == hand[0] && card[0] == hand[1]){
+                total = total + combosPorMano[hand][0].length
+            } else if(card[0] == hand[0] || card[0] == hand[1]){
+                for(var nextCard in boardSeleccionado){
+                    if(nextCard[0] == card[0]){
+                        total = total + combosPorMano[hand][0].length;
+                    }
+                }
+            }
+        }
+    }
+    return total;
+}
+*/
 
 // disenio
 

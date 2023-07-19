@@ -60,11 +60,38 @@ td {
     margin-top: -9%;
 }
 
+.dead-cards{
+    margin-left: 19%;
+}
+
 .dead-cards-text{
     margin-top: 9%;
     justify-content: center;
     display: flex;
 }
+
+.filters {
+    margin-top: 1%;
+    margin-left: 75%;
+    position: absolute;
+}
+  
+.filters button {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4%;
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+  
+.filters button i {
+    margin-right: 5px;
+}
+  
 
 .pairs{
     background-color: rgba(30, 60, 99, 0.7);
