@@ -177,28 +177,42 @@ function sumCombos(hand){
     return total
 }
 
-// agregar combos por mano
 function toggleCombo(hand) {
     if (combosSeleccionados.hasOwnProperty(hand)) {
       delete combosSeleccionados[hand];
+      delete combosPorMano[hand];
     } else {
       combosSeleccionados[hand] = true;
+      combosPerHand(hand);
     }
     actualizarTotal();
-  }
+}
 
-  function actualizarTotal() {
+function combosPerHand(hand){
+    var count = combos(hand);
+    combosPorMano[hand] = [count];
+    for(hand in combosSeleccionados){
+        if(!combosPorMano.hasOwnProperty(hand)){
+            combosPorMano[hand] = [count];
+        }
+    }
+    return combosPorMano;
+}
+
+
+function actualizarTotal() {
     var totalElement = document.getElementById("total");
     var total = 0;
   
-    for (var hand in combosSeleccionados) {
-      if (combosSeleccionados.hasOwnProperty(hand)) {
-        total += sumCombos(hand);
+    for (var hand in combosPorMano) {
+      if (combosPorMano.hasOwnProperty(hand)) {
+        var combos = combosPorMano[hand][0];
+        total += combos.length;
       }
     }
   
     totalElement.innerHTML = total + ' combos en rango preflop';
-  }
+}
 
 var flopDivs = {
     flop1: document.querySelector(".flop1"),
@@ -298,44 +312,51 @@ function clearSelectionAndImages() {
     Object.keys(boardSeleccionado).forEach(function(card) {
       delete boardSeleccionado[card];
     });
+
   }
   
 // combos por mano
-function discountCombos(){
+function discountCombos() {
     var totalElement = document.getElementById("total");
     var total = 0;
   
-    for (var hand in combosSeleccionados) {
-      if (combosSeleccionados.hasOwnProperty(hand)) {
-        total += sumCombos(hand);
+    // Obtener la suma de combos seleccionados por mano
+    // Eliminar combos que contengan cartas del board
+    for (var card in boardSeleccionado) {
+        if (boardSeleccionado.hasOwnProperty(card) && boardSeleccionado[card]) {
+          for (var hand in combosPorMano) {
+            if (combosPorMano.hasOwnProperty(hand)) {
+              var combos = combosPorMano[hand][0];
+              var filteredCombos = [];
+      
+              for (var i = 0; i < combos.length; i++) {
+                var combo = combos[i];
+                if (!combo.includes(card)) {
+                  filteredCombos.push(combo);
+                }
+              }
+              combosPorMano[hand] = [filteredCombos]; // Asignar el nuevo array modificado a combosPorMano[hand]
+            }
+          }
+        }
+      }
+      
+      
+    
+  
+    // Calcular el total de combos modificados por mano
+    for (var hand in combosPorMano) {
+      if (combosPorMano.hasOwnProperty(hand)) {
+        var combos = combosPorMano[hand][0];
+        total += combos.length;
       }
     }
-
-    for(let i = 0; i < Object.keys(boardSeleccionado).length; i++){
-        for(let j = 0; j < Object.keys(combosSeleccionados).length; j++){
-            if((Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(0) || Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(1))
-            && Object.keys(combosSeleccionados)[j].includes('s')){
-                delete combosSeleccionados[j];
-                total = total - 1;
-
-            }
-            if((Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(0) || Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(1)) 
-            && Object.keys(combosSeleccionados)[j].includes('o')){
-                delete combosSeleccionados[j];
-                total = total - 3;
-
-            }
-            if((Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(0) || Object.keys(boardSeleccionado)[i].charAt(0) == Object.keys(combosSeleccionados)[j].charAt(1))
-             && Object.keys(combosSeleccionados)[j].length == 2){
-                delete combosSeleccionados[j];
-                total = total - 3;
-
-            }
-        }
-    }
-    
+  
     totalElement.innerHTML = total + ' combos en rango preflop';
-}
+  }
+  
+  
+  
 
 // disenio
 
