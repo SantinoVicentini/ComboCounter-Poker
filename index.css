@@ -60,6 +60,12 @@ td {
     margin-top: -9%;
 }
 
+.dead-cards-text{
+    margin-top: 9%;
+    justify-content: center;
+    display: flex;
+}
+
 .pairs{
     background-color: rgba(30, 60, 99, 0.7);
 }
