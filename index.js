@@ -466,6 +466,64 @@ function set() {
 
     return combosFiltrados;
 }
+
+function straight() {
+  var straightCombos = [];
+  var selectedCards = Object.keys(boardSeleccionado);
+
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+        var allCards = combo.concat(selectedCards).sort();
+        var countConsecutive = 1;
+        var prevCardValue = -1;
+
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]); // Implementa esta función para obtener el valor numérico de la carta (por ejemplo, "A" -> 14, "K" -> 13, etc.)
+          if (prevCardValue !== -1 && cardValue === prevCardValue + 1) {
+            countConsecutive++;
+            if (countConsecutive === 5) {
+              straightCombos.push(combo);
+              break;
+            }
+          } else if (cardValue !== prevCardValue) {
+            countConsecutive = 1;
+          }
+
+          prevCardValue = cardValue;
+        }
+      }
+    }
+  }
+
+  console.log(straightCombos)
+
+
+  return straightCombos;
+}
+
+function getCardValue(card) {
+  var cardValueMap = {
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "7": 7,
+    "8": 8,
+    "9": 9,
+    "T": 10,
+    "J": 11,
+    "Q": 12,
+    "K": 13,
+    "A": 14
+  };
+
+  var rank = card.slice(0, -1); // Eliminar el último carácter (el palo) para obtener solo el rango de la carta
+  return cardValueMap[rank];
+}
   
 function filters(){
   var totalCombos = actualizarTotal();
