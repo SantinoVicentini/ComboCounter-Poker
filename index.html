@@ -226,7 +226,7 @@
     </table>
 
     <div class="range-text">
-        <p id="total">0 combos en rango preflop</p>
+        <p id="total">0 Combos in preflop range</p>
         <button class="clear" onclick="clearSelectionAndUpdateTotal()">CLEAR</button>
     </div>
 
@@ -332,8 +332,8 @@
         <i class="fi fi-sr-filter"></i>
         straight
         </button>
-        <button class="set" onclick="findTrios()">
-        <i class="fi fi-sr-filter"></i>
+        <button class="set" onclick="set(); filters(); toggleSet();">
+        <i id="icon" class="fi fi-sr-filter"></i>
         set
         </button>
         <button class="two-pair">
@@ -372,6 +372,10 @@
         <i class="fi fi-sr-filter"></i>
         nothing
         </button>
+        <div class="filter-box">
+            <p id="filterTotal">Total number of combos: 0</p>
+            <p id="passFilter">Combos that pass the filters: 0</p>
+        </div>
     </div>
 
     <div class="dead-cards">

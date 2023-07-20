@@ -202,6 +202,8 @@ function combosPerHand(hand){
 
 function actualizarTotal() {
     var totalElement = document.getElementById("total");
+    var filterBox = document.getElementById("filterTotal");
+
     var total = 0;
   
     for (var hand in combosPorMano) {
@@ -211,7 +213,9 @@ function actualizarTotal() {
       }
     }
   
-    totalElement.innerHTML = total + ' combos en rango preflop';
+    totalElement.innerHTML = total + ' Combos in preflop range';
+    filterBox.innerHTML = 'Total number of combos: ' + total
+    return total;
 }
 
 var flopDivs = {
@@ -291,7 +295,7 @@ function addBoard(card){
 
 function clearSelectionAndImages() {
     var selectedCells = document.querySelectorAll("#table td.selected-heart, #table td.selected-club, #table td.selected-diamond, #table td.selected-spade");
-  
+    var passFilter = document.getElementById("passFilter");
     for (var i = 0; i < selectedCells.length; i++) {
       var cell = selectedCells[i];
       cell.classList.remove("selected-heart", "selected-club", "selected-diamond", "selected-spade");
@@ -313,11 +317,15 @@ function clearSelectionAndImages() {
       delete boardSeleccionado[card];
     });
 
+    passFilter.innerHTML = 'Combos that pass the filters: 0'
+
   }
   
 // combos por mano
 function discountCombos() {
     var totalElement = document.getElementById("total");
+    var filterBox = document.getElementById("filterTotal");
+
     var total = 0;
   
     // Obtener la suma de combos seleccionados por mano
@@ -353,32 +361,15 @@ function discountCombos() {
     }
   
     totalElement.innerHTML = total + ' combos en rango preflop';
+    filterBox.innerHTML = 'Total number of combos: ' + total
+
   }
 
-/*
-function set(){
-    var total = 0;
-    for(var card in boardSeleccionado){
-        for(var hand in combosSeleccionados){
-            if(card[0] == hand[0] && card[0] == hand[1]){
-                total = total + combosPorMano[hand][0].length
-            } else if(card[0] == hand[0] || card[0] == hand[1]){
-                for(var nextCard in boardSeleccionado){
-                    if(nextCard[0] == card[0]){
-                        total = total + combosPorMano[hand][0].length;
-                    }
-                }
-            }
-        }
-    }
-    return total;
-}
-*/
-
-function findTrios() {
+// FALTA FILTRAR LOS FULLES de los combos que no son pares
+function set() {
     var trioCombos = [];
     var selectedCards = Object.keys(boardSeleccionado);
-    var full = 1;
+    var combosFiltrados = 0;
   
     // Iterar por cada conjunto de combos
     for (var hand in combosPorMano) {
@@ -391,7 +382,6 @@ function findTrios() {
           if (selectedCards.some(function(card) {
             let count = 0;
             let set = false;
-            let pairBoard = false;
             for(var j in boardSeleccionado){
               if(boardSeleccionado.hasOwnProperty(j)){
                 if(j[0] === card[0]){
@@ -400,37 +390,118 @@ function findTrios() {
                       set = true; 
                   }
                 }
-                console.log(set)
-                console.log(count)
+                //console.log(set)
+                //console.log(count)
+                //console.log(full)
 
-                if(set && count == 1){
-                  count--;
-                  full = count;
-                }
+                //if(set && pairBoard == -1){
+                  //full = pairBoard
+                //}
                 //console.log(count)
                 //console.log(pairBoard)
               }
             }
-            return ((card[0] === combos[i][0][0] || card[0] === combos[i][1][0]) && count == 2) || set// Comparar primer carácter
+            return ((card[0] === combos[i][0][0] || card[0] === combos[i][1][0]) && count == 2) || set // Comparar primer carácter
           })) {
             matchingCount++;
 
           }
         }
-        // Si hay al menos tres cartas del combo en el board, es un trío
-        if (matchingCount >= 2 && full !== 0) {
+        
+        if (matchingCount >= 2) {
           trioCombos.push(combos);
         }
       }
     }
-    //console.log(matchingCount)
+    //console.log(selectedCards)
     console.log(trioCombos)
 
-    return trioCombos;
+    var full = 0;
+    var fullso = 0
+    
+    for(let z = 0; z < trioCombos.length; z++){
+      if(trioCombos[z][0][0][0] === trioCombos[z][0][1][0]){
+        for(let x = 0; x < selectedCards.length; x++){
+          for(let c = 0; c < selectedCards.length; c++){
+            if(selectedCards[x][0] === selectedCards[c][0] && x !== c){
+              full++;
+              if(full >= 1){
+                trioCombos.splice(z);
+              }
+            }
+          }
+        }
+      }
+      /*
+      else if((trioCombos[z][0][0][0] !== trioCombos[z][0][1][0])){
+        var primero = trioCombos[z][0][0][0];
+        var segundo = trioCombos[z][0][1][0];
+
+        for(let x = 0; x < selectedCards.length; x++){
+          for(let c = 0; c < selectedCards.length; c++){
+            
+            if(((selectedCards[x][0] === selectedCards[c][0]) && (x !== c))){
+              fullso++;
+              console.log(fullso)
+              if(fullso >= 3){
+                trioCombos.splice(z);
+              }
+            }
+          }
+        }
+      }
+      */
+    }
+
+    for(var v = 0; v < trioCombos.length; v++){
+      combosFiltrados = combosFiltrados + trioCombos[v].length;
+    }
+
+    console.log(trioCombos)
+    
+    console.log(combosFiltrados)
+
+    
+
+
+    return combosFiltrados;
 }
   
-  
+function filters(){
+  var totalCombos = actualizarTotal();
+  var setCombos = set();
 
+  var actualPercent = 0;
+  var actualSumOfCombos = 0;
+
+  var passFilter = document.getElementById("passFilter");
+  actualPercent = setCombos/totalCombos;
+  actualSumOfCombos = setCombos;
+
+  passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+
+}
+
+var isButtonActive = false;
+
+function toggleSet(){
+  var iconElement = document.getElementById('icon');
+  var passFilter = document.getElementById("passFilter");
+
+
+  if (isButtonActive) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+  }
+
+  // Alternar el estado del botón
+  isButtonActive = !isButtonActive;
+}
   // Ejemplo de uso:
   
   
