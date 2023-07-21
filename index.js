@@ -470,39 +470,65 @@ function set() {
 function straight() {
   var straightCombos = [];
   var selectedCards = Object.keys(boardSeleccionado);
+  var count = 0;
+  var lowStraight = 'A2345';
 
   for (var hand in combosPorMano) {
     if (combosPorMano.hasOwnProperty(hand)) {
       var combos = combosPorMano[hand][0];
       for (var i = 0; i < combos.length; i++) {
         var combo = combos[i];
-        var allCards = combo.concat(selectedCards).sort();
+        console.log(combo)
+        var allCards = combo.concat(selectedCards).sort(function(a, b) {
+          var cardValueA = getCardValue(a);
+          var cardValueB = getCardValue(b);
+          return cardValueA - cardValueB;
+        });
         var countConsecutive = 1;
         var prevCardValue = -1;
 
+
         for (var j = 0; j < allCards.length; j++) {
-          var cardValue = getCardValue(allCards[j]); // Implementa esta función para obtener el valor numérico de la carta (por ejemplo, "A" -> 14, "K" -> 13, etc.)
+          var cardValue = getCardValue(allCards[j]);
+          var card = allCards[j];
+          var char = card[0];
+          
           if (prevCardValue !== -1 && cardValue === prevCardValue + 1) {
             countConsecutive++;
             if (countConsecutive === 5) {
               straightCombos.push(combo);
               break;
             }
-          } else if (cardValue !== prevCardValue) {
+          } else {
+            // Reset the countConsecutive when there's a gap between cards
             countConsecutive = 1;
+
+            // Check for the low straight (A, 2, 3, 4, 5)
+            if (lowStraight.includes(char) && combo[0][0] === 'A') {
+              count++;
+            }
+            console.log(count)
+            if(count >= 5){
+              straightCombos.push(combo);
+              break;
+            }
           }
 
           prevCardValue = cardValue;
         }
+        
       }
     }
   }
 
-  console.log(straightCombos)
-
+  console.log(straightCombos);
 
   return straightCombos;
 }
+
+
+
+
 
 function getCardValue(card) {
   var cardValueMap = {
@@ -518,12 +544,13 @@ function getCardValue(card) {
     "J": 11,
     "Q": 12,
     "K": 13,
-    "A": 14
+    "A": 14,
   };
 
   var rank = card.slice(0, -1); // Eliminar el último carácter (el palo) para obtener solo el rango de la carta
   return cardValueMap[rank];
 }
+
   
 function filters(){
   var totalCombos = actualizarTotal();
