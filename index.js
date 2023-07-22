@@ -459,7 +459,6 @@ function set() {
 
     console.log(trioCombos)
     
-    console.log(combosFiltrados)
 
     
 
@@ -467,64 +466,65 @@ function set() {
     return combosFiltrados;
 }
 
+// CHEQUEAR EL CASO DONDE ALL CARDS QUEDA EMPAREJADO en el medio Y A2345 
 function straight() {
   var straightCombos = [];
   var selectedCards = Object.keys(boardSeleccionado);
-  var count = 0;
-  var lowStraight = 'A2345';
 
   for (var hand in combosPorMano) {
     if (combosPorMano.hasOwnProperty(hand)) {
       var combos = combosPorMano[hand][0];
       for (var i = 0; i < combos.length; i++) {
         var combo = combos[i];
-        console.log(combo)
         var allCards = combo.concat(selectedCards).sort(function(a, b) {
           var cardValueA = getCardValue(a);
           var cardValueB = getCardValue(b);
           return cardValueA - cardValueB;
         });
+        
         var countConsecutive = 1;
         var prevCardValue = -1;
-
+        var lowStraightCount = 0; // To track the count of cards in the low straight
 
         for (var j = 0; j < allCards.length; j++) {
           var cardValue = getCardValue(allCards[j]);
-          var card = allCards[j];
-          var char = card[0];
+          
+          if (prevCardValue !== -1 && cardValue === prevCardValue) {
+            // Skip the card if it's the same value as the previous one
+            continue;
+          }
           
           if (prevCardValue !== -1 && cardValue === prevCardValue + 1) {
             countConsecutive++;
-            if (countConsecutive === 5) {
+            
+            // Check for the low straight (A-2-3-4-5)
+            if (countConsecutive === 4 && cardValue === 5 && getCardValue(allCards[allCards.length - 1]) === 14) {
+              lowStraightCount = countConsecutive;
+              countConsecutive = 1;
+            }
+
+            if (countConsecutive === 5 || lowStraightCount === 4) {
               straightCombos.push(combo);
               break;
             }
           } else {
-            // Reset the countConsecutive when there's a gap between cards
             countConsecutive = 1;
-
-            // Check for the low straight (A, 2, 3, 4, 5)
-            if (lowStraight.includes(char) && combo[0][0] === 'A') {
-              count++;
-            }
-            console.log(count)
-            if(count >= 5){
-              straightCombos.push(combo);
-              break;
-            }
+            lowStraightCount = 0;
           }
 
           prevCardValue = cardValue;
         }
-        
       }
     }
   }
 
+
   console.log(straightCombos);
 
-  return straightCombos;
+  return straightCombos.length;
 }
+
+
 
 
 
@@ -551,30 +551,26 @@ function getCardValue(card) {
   return cardValueMap[rank];
 }
 
-  
-function filters(){
+
+var isButtonActive1 = false;
+var isButtonActive2 = false;
+
+
+function toggleSet(){
+  var iconElement = document.getElementById('icon2');
+  var passFilter = document.getElementById("passFilter");
+
   var totalCombos = actualizarTotal();
   var setCombos = set();
 
   var actualPercent = 0;
   var actualSumOfCombos = 0;
 
-  var passFilter = document.getElementById("passFilter");
   actualPercent = setCombos/totalCombos;
   actualSumOfCombos = setCombos;
 
-  passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
 
-}
-
-var isButtonActive = false;
-
-function toggleSet(){
-  var iconElement = document.getElementById('icon');
-  var passFilter = document.getElementById("passFilter");
-
-
-  if (isButtonActive) {
+  if (isButtonActive2) {
     // Si el botón está activo, restaurar el color original
     iconElement.style.color = '';
     passFilter.innerHTML = 'Combos that pass the filters: 0';
@@ -582,14 +578,43 @@ function toggleSet(){
   } else {
     // Si el botón está inactivo, cambiar el color a uno específico
     iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
   }
 
   // Alternar el estado del botón
-  isButtonActive = !isButtonActive;
+  isButtonActive2 = !isButtonActive2;
 }
-  // Ejemplo de uso:
-  
-  
+
+
+function toggleStraight(){
+  var iconElement = document.getElementById('icon1');
+  var passFilter = document.getElementById("passFilter");
+
+  var totalCombos = actualizarTotal();
+  var straightCombos = straight();
+
+  var actualPercent = 0;
+  var actualSumOfCombos = 0;
+
+  actualPercent = straightCombos/totalCombos;
+  actualSumOfCombos = straightCombos;
+
+
+  if (isButtonActive1) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+
+  // Alternar el estado del botón
+  isButtonActive1 = !isButtonActive1;
+}
+
 
 // disenio
 

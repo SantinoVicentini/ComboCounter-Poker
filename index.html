@@ -328,12 +328,12 @@
     </div>
 
     <div class="filters">
-        <button class="straight" onclick="straight()">
-        <i class="fi fi-sr-filter"></i>
+        <button class="straight" onclick="straight(); toggleStraight();">
+        <i id="icon1" class="fi fi-sr-filter"></i>
         straight
         </button>
-        <button class="set" onclick="set(); filters(); toggleSet();">
-        <i id="icon" class="fi fi-sr-filter"></i>
+        <button class="set" onclick="set(); toggleSet();">
+        <i id="icon2" class="fi fi-sr-filter"></i>
         set
         </button>
         <button class="two-pair">
