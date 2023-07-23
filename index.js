@@ -551,9 +551,335 @@ function getCardValue(card) {
   return cardValueMap[rank];
 }
 
+function twoPair(){
+  var twoPairCombos = [];
+  var selectedCards = Object.keys(boardSeleccionado);
+
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+        var allCards = combo.concat(selectedCards).sort(function(a, b) {
+          var cardValueA = getCardValue(a);
+          var cardValueB = getCardValue(b);
+          return cardValueA - cardValueB;
+        });
+
+
+        var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]);
+          cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+        }
+
+
+        var countTwo = 0;
+        for (var value in cardFrequencies) {
+          if (cardFrequencies.hasOwnProperty(value) && cardFrequencies[value] === 2) {
+            countTwo++;
+          }
+        }
+
+        if(countTwo === 2 || countTwo === 3){
+          twoPairCombos.push(combo);
+        }
+
+      }
+    }
+  }
+
+  return twoPairCombos.length;
+
+}
+
+function overpair() {
+  var overPairCombos = [];
+  var selectedCards = Object.keys(boardSeleccionado);
+
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+        var allCards = combo.concat(selectedCards).sort(function(a, b) {
+          var cardValueA = getCardValue(a);
+          var cardValueB = getCardValue(b);
+          return cardValueA - cardValueB;
+        });
+
+        var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]);
+          cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+        }
+        console.log(cardFrequencies)
+        var countTwo = 0;
+        for (var value in cardFrequencies) {
+          if (cardFrequencies.hasOwnProperty(value) && cardFrequencies[value] === 2) {
+            countTwo++;
+          }
+        }
+
+        if (countTwo === 1 && hasOverPair(combo, selectedCards)) {
+          overPairCombos.push(combo);
+        }
+      }
+    }
+  }
+
+  return overPairCombos.length;
+}
+
+function hasOverPair(combo, boardCards) {
+  var maxBoardCardValue = Math.max(...boardCards.map(getCardValue));
+  return combo.some(card => getCardValue(card) > maxBoardCardValue);
+}
+
+function topPair() {
+  var topPairCombosList = [];
+  var selectedCards = Object.keys(boardSeleccionado);
+
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+        var allCards = combo.concat(selectedCards).sort(function(a, b) {
+          var cardValueA = getCardValue(a);
+          var cardValueB = getCardValue(b);
+          return cardValueA - cardValueB;
+        });
+
+        var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]);
+          cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+        }
+
+        var maxBoardCardValue = Math.max(...selectedCards.map(getCardValue));
+        if (cardFrequencies[maxBoardCardValue] === 2) {
+          var hasOtherHighCard = false;
+          for (var j = 0; j < allCards.length; j++) {
+            var cardValue = getCardValue(allCards[j]);
+            if (cardValue !== maxBoardCardValue && cardFrequencies[cardValue] >= 2) {
+              hasOtherHighCard = true;
+              break;
+            }
+          }
+
+          if (!hasOtherHighCard) {
+            topPairCombosList.push(combo);
+          }
+        }
+      }
+    }
+  }
+
+  console.log(topPairCombosList)
+
+  return topPairCombosList.length;
+}
+
+function isBoardPaired(selectedCards) {
+  var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+
+  for (var j = 0; j < selectedCards.length; j++) {
+    var cardValue = getCardValue(selectedCards[j]);
+    cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+  }
+
+  // Verificar si hay algún valor de carta con frecuencia mayor o igual a 2 (está emparejado)
+  for (var value in cardFrequencies) {
+    if (cardFrequencies.hasOwnProperty(value) && cardFrequencies[value] >= 2) {
+      return true;
+    }
+  }
+
+  return false; // No está emparejado
+}
+
+
+function ppTopCard() {
+  var ppTopCardCombos = [];
+  var selectedCards = Object.keys(boardSeleccionado);
+
+  if (isBoardPaired(selectedCards)) {
+    return ppTopCardCombos.length; // Si el board está emparejado, no hay pocket pairs posibles
+  }
+
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+        var allCards = combo.concat(selectedCards).sort(function(a, b) {
+          var cardValueA = getCardValue(a);
+          var cardValueB = getCardValue(b);
+          return cardValueA - cardValueB;
+        });
+
+        var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]);
+          cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+        }
+        
+        if (getCardValue(combo[0]) === getCardValue(combo[1])) {
+          var pocketPairValue = getCardValue(combo[0]);
+          var isTopPair = true;
+          var maxBoardCardValue = Math.max(...selectedCards.map(getCardValue));
+          var cardValue = 0;
+
+        
+          for (var j = 0; j < selectedCards.length; j++) {
+            if(getCardValue(selectedCards[j]) !== maxBoardCardValue){
+              cardValue = getCardValue(selectedCards[j]);
+            }
+            if (pocketPairValue <= cardValue || pocketPairValue >= maxBoardCardValue) {
+              isTopPair = false;
+              break;
+            }
+          }
+        
+          if (isTopPair) {
+            ppTopCardCombos.push(combo);
+          }
+        }
+        
+
+      }
+    }
+  }
+
+  console.log(ppTopCardCombos);
+
+  return ppTopCardCombos.length;
+}
+
+function ppSecondCard() {
+  var ppSecondCardCombos = [];
+  var selectedCards = Object.keys(boardSeleccionado);
+
+  if (isBoardPaired(selectedCards)) {
+    return ppSecondCardCombos.length; // Si el board está emparejado, no hay pocket pairs posibles
+  }
+
+  // Obtener la segunda carta más alta del board
+  var boardCardValues = selectedCards.map(getCardValue);
+  boardCardValues.sort(function(a, b) {
+    return b - a;
+  });
+
+  var secondHighestCardValue = boardCardValues[1]; // El índice 1 contiene la segunda carta más alta
+
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+        var allCards = combo.concat(selectedCards).sort(function(a, b) {
+          var cardValueA = getCardValue(a);
+          var cardValueB = getCardValue(b);
+          return cardValueA - cardValueB;
+        });
+
+        var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]);
+          cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+        }
+        
+        if (getCardValue(combo[0]) === getCardValue(combo[1])) {
+          var pocketPairValue = getCardValue(combo[0]);
+          var isSecondPair = true;
+          var maxBoardCardValue = Math.max(...selectedCards.map(getCardValue));
+          var cardValue = 0;
+
+          for (var j = 0; j < selectedCards.length; j++) {
+            var currentCardValue = getCardValue(selectedCards[j]);
+            if (currentCardValue !== maxBoardCardValue && currentCardValue !== secondHighestCardValue) {
+              cardValue = currentCardValue;
+            }
+            console.log(cardValue)
+            if (pocketPairValue <= cardValue || pocketPairValue >= maxBoardCardValue || pocketPairValue >= secondHighestCardValue) {
+              isSecondPair = false;
+              break;
+            }
+          }
+        
+          if (isSecondPair) {
+            ppSecondCardCombos.push(combo);
+          }
+        }
+      }
+    }
+  }
+
+  console.log(ppSecondCardCombos);
+
+  return ppSecondCardCombos.length;
+}
+
+// ME FALTA CHEQUEAR CUANDO PP ES MENOR A MINCARDBOARD
+function weakPair() {
+  var weakPairCombosList = [];
+  var selectedCards = Object.keys(boardSeleccionado);
+
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+        var allCards = combo.concat(selectedCards).sort(function(a, b) {
+          var cardValueA = getCardValue(a);
+          var cardValueB = getCardValue(b);
+          return cardValueA - cardValueB;
+        });
+
+        var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]);
+          cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+        }
+
+        var minBoardCardValue = Math.min(...selectedCards.map(getCardValue));
+        if (cardFrequencies[minBoardCardValue] === 2) {
+          var hasOtherminCard = false;
+          for (var j = 0; j < allCards.length; j++) {
+            var cardValue = getCardValue(allCards[j]);
+            if (cardValue !== minBoardCardValue && cardFrequencies[cardValue] >= 2) {
+              hasOtherminCard = true;
+              break;
+            }
+          }
+          if (!hasOtherminCard) {
+            weakPairCombosList.push(combo);
+          }
+        }
+      }
+    }
+  }
+
+  console.log(weakPairCombosList)
+
+  return weakPairCombosList.length;
+}
+
 
 var isButtonActive1 = false;
 var isButtonActive2 = false;
+var isButtonActive3 = false;
+var isButtonActive4 = false;
+var isButtonActive5 = false;
+var isButtonActive6 = false;
+var isButtonActive7 = false;
+var isButtonActive8 = false;
+var isButtonActive9 = false;
+
+
+
+
 
 
 function toggleSet(){
@@ -615,6 +941,180 @@ function toggleStraight(){
   isButtonActive1 = !isButtonActive1;
 }
 
+function toggleTwoPairs(){
+  var iconElement = document.getElementById('icon3');
+  var passFilter = document.getElementById("passFilter");
+
+  var totalCombos = actualizarTotal();
+  var twoPairCombo = twoPair();
+
+  var actualPercent = 0;
+  var actualSumOfCombos = 0;
+
+  actualPercent = twoPairCombo/totalCombos;
+  actualSumOfCombos = twoPairCombo;
+
+
+  if (isButtonActive3) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+
+  // Alternar el estado del botón
+  isButtonActive3 = !isButtonActive3;
+}
+
+function toggleOverpair(){
+  var iconElement = document.getElementById('icon4');
+  var passFilter = document.getElementById("passFilter");
+
+  var totalCombos = actualizarTotal();
+  var overpairCombo = overpair();
+
+  var actualPercent = 0;
+  var actualSumOfCombos = 0;
+
+  actualPercent = overpairCombo/totalCombos;
+  actualSumOfCombos = overpairCombo;
+
+
+  if (isButtonActive4) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+
+  // Alternar el estado del botón
+  isButtonActive4 = !isButtonActive4;
+}
+
+
+function toggleTopPair(){
+  var iconElement = document.getElementById('icon5');
+  var passFilter = document.getElementById("passFilter");
+
+  var totalCombos = actualizarTotal();
+  var topPairCombos = topPair();
+
+  var actualPercent = 0;
+  var actualSumOfCombos = 0;
+
+  actualPercent = topPairCombos/totalCombos;
+  actualSumOfCombos = topPairCombos;
+
+
+  if (isButtonActive5) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+
+  // Alternar el estado del botón
+  isButtonActive5 = !isButtonActive5;
+}
+
+function togglePpTopCard(){
+  var iconElement = document.getElementById('icon6');
+  var passFilter = document.getElementById("passFilter");
+
+  var totalCombos = actualizarTotal();
+  var ppTCombos = ppTopCard();
+
+  var actualPercent = 0;
+  var actualSumOfCombos = 0;
+
+  actualPercent = ppTCombos/totalCombos;
+  actualSumOfCombos = ppTCombos;
+
+
+  if (isButtonActive6) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+
+  // Alternar el estado del botón
+  isButtonActive6 = !isButtonActive6;
+}
+
+function togglePpSecondCard(){
+  var iconElement = document.getElementById('icon8');
+  var passFilter = document.getElementById("passFilter");
+
+  var totalCombos = actualizarTotal();
+  var ppSCombos = ppSecondCard();
+
+  var actualPercent = 0;
+  var actualSumOfCombos = 0;
+
+  actualPercent = ppSCombos/totalCombos;
+  actualSumOfCombos = ppSCombos;
+
+
+  if (isButtonActive8) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+
+  // Alternar el estado del botón
+  isButtonActive8 = !isButtonActive8;
+}
+
+function toggleWeakPair(){
+  var iconElement = document.getElementById('icon9');
+  var passFilter = document.getElementById("passFilter");
+
+  var totalCombos = actualizarTotal();
+  var weakPairCombos = weakPair();
+
+  var actualPercent = 0;
+  var actualSumOfCombos = 0;
+
+  actualPercent = weakPairCombos/totalCombos;
+  actualSumOfCombos = weakPairCombos;
+
+
+  if (isButtonActive9) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+
+  // Alternar el estado del botón
+  isButtonActive9 = !isButtonActive9;
+}
 
 // disenio
 
