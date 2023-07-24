@@ -866,6 +866,56 @@ function weakPair() {
   return weakPairCombosList.length;
 }
 
+function middlePair() {
+  var middlePairCombosList = [];
+  var selectedCards = Object.keys(boardSeleccionado);
+
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+
+        var allCards = combo.concat(selectedCards).sort(function(a, b) {
+          var cardValueA = getCardValue(a);
+          var cardValueB = getCardValue(b);
+          return cardValueA - cardValueB;
+        });
+
+        var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]);
+          cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+        }
+
+        var maxBoardCardValue = Math.max(...selectedCards.map(getCardValue));
+        var minBoardCardValue = Math.min(...selectedCards.map(getCardValue));
+        var hasOtherHighCard = false;
+
+
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]);
+
+          if(cardFrequencies[cardValue] === 2 && cardValue !== maxBoardCardValue && cardValue !== minBoardCardValue && cardFrequencies[cardValue] >= 2){
+            hasOtherHighCard = true;
+            break;
+          }
+        }
+
+        if (hasOtherHighCard) {
+          middlePairCombosList.push(combo);
+        }
+        
+      }
+    }
+  }
+
+  console.log(middlePairCombosList);
+
+  return middlePairCombosList.length;
+}
+
+
 
 var isButtonActive1 = false;
 var isButtonActive2 = false;
