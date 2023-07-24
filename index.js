@@ -1166,6 +1166,35 @@ function toggleWeakPair(){
   isButtonActive9 = !isButtonActive9;
 }
 
+function toggleMidPair(){
+  var iconElement = document.getElementById('icon7');
+  var passFilter = document.getElementById("passFilter");
+
+  var totalCombos = actualizarTotal();
+  var midPairCombos = middlePair();
+
+  var actualPercent = 0;
+  var actualSumOfCombos = 0;
+
+  actualPercent = midPairCombos/totalCombos;
+  actualSumOfCombos = midPairCombos;
+
+
+  if (isButtonActive7) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+
+  // Alternar el estado del botón
+  isButtonActive7 = !isButtonActive7;
+}
+
 // disenio
 
 function toggleColor(element) {
