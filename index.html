@@ -328,48 +328,56 @@
     </div>
 
     <div class="filters">
-        <button class="straight" onclick="straight(); toggleStraight();">
+        <button class="full" onclick="toggleButton(12)">
+        <i id="icon12" class="fi fi-sr-filter"></i>
+        full house
+        </button>
+        <button class="flush" onclick="toggleButton(13)">
+        <i id="icon13" class="fi fi-sr-filter"></i>
+        flush
+        </button>
+        <button class="straight" onclick="toggleButton(1)">
         <i id="icon1" class="fi fi-sr-filter"></i>
         straight
         </button>
-        <button class="set" onclick="set(); toggleSet();">
+        <button class="set" onclick="toggleButton(2)">
         <i id="icon2" class="fi fi-sr-filter"></i>
         set
         </button>
-        <button class="two-pair" onclick="twoPair(); toggleTwoPairs();">
+        <button class="two-pair" onclick="toggleButton(3)">
         <i id="icon3" class="fi fi-sr-filter"></i>
         two pair
         </button>
-        <button class="overpair" onclick="overpair(); toggleOverpair();">
+        <button class="overpair" onclick="toggleButton(4)">
         <i id="icon4" class="fi fi-sr-filter"></i>
         overpair
         </button>
-        <button class="top-pair" onclick="topPair(); toggleTopPair()">
+        <button class="top-pair" onclick="toggleButton(5)">
         <i id="icon5" class="fi fi-sr-filter"></i>
         top pair
         </button>
-        <button class="pp-<-top-card" onclick="ppTopCard(); togglePpTopCard()">
+        <button class="pp-<-top-card" onclick="toggleButton(6)">
         <i id="icon6" class="fi fi-sr-filter"></i>
         pp < top card
         </button>
-        <button class="middle-pair" onclick="middlePair(); toggleMidPair()">
+        <button class="middle-pair" onclick="toggleButton(7)">
         <i id="icon7" class="fi fi-sr-filter"></i>
         middle pair
         </button>
-        <button class="pp-<-2nd-card" onclick="ppSecondCard(); togglePpSecondCard()">
+        <button class="pp-<-2nd-card" onclick="toggleButton(8)">
         <i id="icon8" class="fi fi-sr-filter"></i>
         pp < 2nd card
         </button>
-        <button class="weak-pair" onclick="weakPair(); toggleWeakPair()">
+        <button class="weak-pair" onclick="toggleButton(9)">
         <i id="icon9" class="fi fi-sr-filter"></i>
         weak pair
         </button>
-        <button class="ace-high">
-        <i class="fi fi-sr-filter"></i>
+        <button class="ace-high" onclick="toggleButton(10)">
+        <i id="icon10" class="fi fi-sr-filter"></i>
         ace high
         </button>
-        <button class="nothing">
-        <i class="fi fi-sr-filter"></i>
+        <button class="nothing" onclick="toggleButton(11)">
+        <i id="icon11" class="fi fi-sr-filter"></i>
         nothing
         </button>
         <div class="filter-box">

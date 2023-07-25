@@ -365,108 +365,144 @@ function discountCombos() {
 
   }
 
-// FALTA FILTRAR LOS FULLES de los combos que no son pares
-function set() {
-    var trioCombos = [];
-    var selectedCards = Object.keys(boardSeleccionado);
-    var combosFiltrados = 0;
+function getCardValue(card) {
+    var cardValueMap = {
+      "2": 2,
+      "3": 3,
+      "4": 4,
+      "5": 5,
+      "6": 6,
+      "7": 7,
+      "8": 8,
+      "9": 9,
+      "T": 10,
+      "J": 11,
+      "Q": 12,
+      "K": 13,
+      "A": 14,
+    };
   
-    // Iterar por cada conjunto de combos
-    for (var hand in combosPorMano) {
-      if (combosPorMano.hasOwnProperty(hand)) {
-        var combos = combosPorMano[hand][0];
-        var matchingCount = 0;
+    var rank = card.slice(0, -1); // Eliminar el último carácter (el palo) para obtener solo el rango de la carta
+    return cardValueMap[rank];
+  }
   
-        // Verificar cuántas cartas del combo tienen el primer carácter coincidente con alguna clave en boardSeleccionado
-        for (var i = 0; i < combos.length; i++) {
-          if (selectedCards.some(function(card) {
-            let count = 0;
-            let set = false;
-            for(var j in boardSeleccionado){
-              if(boardSeleccionado.hasOwnProperty(j)){
-                if(j[0] === card[0]){
-                  count++;
-                  if(card[0] === combos[i][0][0] && combos[i][0][0] === combos[i][1][0]){
-                      set = true; 
-                  }
-                }
-                //console.log(set)
-                //console.log(count)
-                //console.log(full)
-
-                //if(set && pairBoard == -1){
-                  //full = pairBoard
-                //}
-                //console.log(count)
-                //console.log(pairBoard)
-              }
-            }
-            return ((card[0] === combos[i][0][0] || card[0] === combos[i][1][0]) && count == 2) || set // Comparar primer carácter
-          })) {
-            matchingCount++;
-
-          }
-        }
-        
-        if (matchingCount >= 2) {
-          trioCombos.push(combos);
-        }
-      }
-    }
-    //console.log(selectedCards)
-    console.log(trioCombos)
-
-    var full = 0;
-    var fullso = 0
-    
-    for(let z = 0; z < trioCombos.length; z++){
-      if(trioCombos[z][0][0][0] === trioCombos[z][0][1][0]){
-        for(let x = 0; x < selectedCards.length; x++){
-          for(let c = 0; c < selectedCards.length; c++){
-            if(selectedCards[x][0] === selectedCards[c][0] && x !== c){
-              full++;
-              if(full >= 1){
-                trioCombos.splice(z);
-              }
-            }
-          }
-        }
-      }
-      /*
-      else if((trioCombos[z][0][0][0] !== trioCombos[z][0][1][0])){
-        var primero = trioCombos[z][0][0][0];
-        var segundo = trioCombos[z][0][1][0];
-
-        for(let x = 0; x < selectedCards.length; x++){
-          for(let c = 0; c < selectedCards.length; c++){
-            
-            if(((selectedCards[x][0] === selectedCards[c][0]) && (x !== c))){
-              fullso++;
-              console.log(fullso)
-              if(fullso >= 3){
-                trioCombos.splice(z);
-              }
-            }
-          }
-        }
-      }
-      */
-    }
-
-    for(var v = 0; v < trioCombos.length; v++){
-      combosFiltrados = combosFiltrados + trioCombos[v].length;
-    }
-
-    console.log(trioCombos)
-    
-
-    
-
-
-    return combosFiltrados;
+function getCardPalo(card) {
+    var cardValueMap = {
+      "h": 1,
+      "s": 2,
+      "c": 3,
+      "d": 4,
+    };
+  
+    var rank = card.slice(1);
+    return cardValueMap[rank];
 }
 
-// CHEQUEAR EL CASO DONDE ALL CARDS QUEDA EMPAREJADO en el medio Y A2345 
+
+function full(){
+  var fullCombos = [];
+  var selectedCards = Object.keys(boardSeleccionado);
+
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+
+        var allCards = combo.concat(selectedCards).sort(function(a, b) {
+          var cardValueA = getCardValue(a);
+          var cardValueB = getCardValue(b);
+          return cardValueA - cardValueB;
+        });
+
+        var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]);
+          cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+        }
+ 
+        var trios = 0;
+        var pairs = 0;
+        var quads = 0;
+
+        for (let hand in cardFrequencies) {
+          if(cardFrequencies.hasOwnProperty(hand)){ 
+          console.log(cardFrequencies[hand])
+          if(cardFrequencies[hand] === 3){
+            trios++;
+          }
+          else if(cardFrequencies[hand] === 2){
+            pairs++;
+          }
+          else if(cardFrequencies[hand] === 4){
+            quads++;
+          }
+        }
+      }
+
+        if ((trios === 1 && pairs === 1) || ((trios === 1 || pairs === 1) && quads === 1)) {
+          fullCombos.push(combo);
+        }
+        
+      
+      }
+    }
+  }
+
+  console.log(fullCombos)
+
+  return fullCombos;
+}
+
+function flush(){
+  
+  var flushCombos = [];
+  var selectedCards = Object.keys(boardSeleccionado);
+
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+
+        var allCards = combo.concat(selectedCards).sort(function(a, b) {
+          var cardValueA = getCardPalo(a);
+          var cardValueB = getCardPalo(b);
+          return cardValueA - cardValueB;
+        });
+
+        var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardPalo(allCards[j]);
+          cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+        }
+ 
+        var flushCount = 0;
+        console.log(cardFrequencies)
+
+        for (let hand in cardFrequencies) {
+          if(cardFrequencies.hasOwnProperty(hand)){ 
+            if(cardFrequencies[hand] >= 5){
+            flushCount++;
+          }
+        }
+      }
+
+        if (flushCount >= 1) {
+          flushCombos.push(combo);
+        }
+        
+      
+      }
+    }
+  }
+
+  console.log(flushCombos)
+
+  return flushCombos;
+}
+
+// CHEQUEAR EL CASO DONDE ALL CARDS QUEDA EMPAREJADO
 function straight() {
   var straightCombos = [];
   var selectedCards = Object.keys(boardSeleccionado);
@@ -521,34 +557,57 @@ function straight() {
 
   console.log(straightCombos);
 
-  return straightCombos.length;
+  return straightCombos;
 }
 
+// FALTA FILTRAR LOS FULLES de los combos que no son pares
+function set() {
+    var trioCombos = [];
+    var selectedCards = Object.keys(boardSeleccionado);
+    
 
 
-
-
-
-
-function getCardValue(card) {
-  var cardValueMap = {
-    "2": 2,
-    "3": 3,
-    "4": 4,
-    "5": 5,
-    "6": 6,
-    "7": 7,
-    "8": 8,
-    "9": 9,
-    "T": 10,
-    "J": 11,
-    "Q": 12,
-    "K": 13,
-    "A": 14,
-  };
-
-  var rank = card.slice(0, -1); // Eliminar el último carácter (el palo) para obtener solo el rango de la carta
-  return cardValueMap[rank];
+    for (var hand in combosPorMano) {
+      if (combosPorMano.hasOwnProperty(hand)) {
+        var combos = combosPorMano[hand][0];
+        for (var i = 0; i < combos.length; i++) {
+          var combo = combos[i];
+  
+          var allCards = combo.concat(selectedCards).sort(function(a, b) {
+            var cardValueA = getCardValue(a);
+            var cardValueB = getCardValue(b);
+            return cardValueA - cardValueB;
+          });
+  
+          var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+          for (var j = 0; j < allCards.length; j++) {
+            var cardValue = getCardValue(allCards[j]);
+            cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+          }
+   
+          var flushCount = 0;
+          console.log(cardFrequencies)
+  
+          for (let hand in cardFrequencies) {
+            if(cardFrequencies.hasOwnProperty(hand)){ 
+              if(cardFrequencies[hand] === 3){
+              flushCount++;
+            }
+          }
+        }
+  
+          if (flushCount === 1) {
+            trioCombos.push(combo);
+          }
+          
+        
+        }
+      }
+    }
+  
+    console.log(trioCombos)
+  
+    return trioCombos;
 }
 
 function twoPair(){
@@ -589,7 +648,7 @@ function twoPair(){
     }
   }
 
-  return twoPairCombos.length;
+  return twoPairCombos;
 
 }
 
@@ -628,12 +687,12 @@ function overpair() {
     }
   }
 
-  return overPairCombos.length;
+  return overPairCombos;
 }
 
 function hasOverPair(combo, boardCards) {
   var maxBoardCardValue = Math.max(...boardCards.map(getCardValue));
-  return combo.some(card => getCardValue(card) > maxBoardCardValue);
+  return combo.every(card => getCardValue(card) > maxBoardCardValue);
 }
 
 function topPair() {
@@ -658,7 +717,7 @@ function topPair() {
         }
 
         var maxBoardCardValue = Math.max(...selectedCards.map(getCardValue));
-        if (cardFrequencies[maxBoardCardValue] === 2) {
+        if (cardFrequencies[maxBoardCardValue] === 2 && (getCardValue(combo[0]) === maxBoardCardValue || getCardValue(combo[1]) === maxBoardCardValue)) {
           var hasOtherHighCard = false;
           for (var j = 0; j < allCards.length; j++) {
             var cardValue = getCardValue(allCards[j]);
@@ -678,7 +737,7 @@ function topPair() {
 
   console.log(topPairCombosList)
 
-  return topPairCombosList.length;
+  return topPairCombosList;
 }
 
 function isBoardPaired(selectedCards) {
@@ -754,7 +813,56 @@ function ppTopCard() {
 
   console.log(ppTopCardCombos);
 
-  return ppTopCardCombos.length;
+  return ppTopCardCombos;
+}
+
+function middlePair() {
+  var middlePairCombosList = [];
+  var selectedCards = Object.keys(boardSeleccionado);
+
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+
+        var allCards = combo.concat(selectedCards).sort(function(a, b) {
+          var cardValueA = getCardValue(a);
+          var cardValueB = getCardValue(b);
+          return cardValueA - cardValueB;
+        });
+
+        var cardFrequencies = {}; // Objeto para almacenar la frecuencia de cada valor de carta
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]);
+          cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
+        }
+
+        var maxBoardCardValue = Math.max(...selectedCards.map(getCardValue));
+        var minBoardCardValue = Math.min(...selectedCards.map(getCardValue));
+        var hasOtherHighCard = false;
+
+
+        for (var j = 0; j < allCards.length; j++) {
+          var cardValue = getCardValue(allCards[j]);
+
+          if(cardFrequencies[cardValue] === 2 && cardValue !== maxBoardCardValue && cardValue !== minBoardCardValue && cardFrequencies[cardValue] >= 2){
+            hasOtherHighCard = true;
+            break;
+          }
+        }
+
+        if (hasOtherHighCard) {
+          middlePairCombosList.push(combo);
+        }
+        
+      }
+    }
+  }
+
+  console.log(middlePairCombosList);
+
+  return middlePairCombosList;
 }
 
 function ppSecondCard() {
@@ -818,7 +926,7 @@ function ppSecondCard() {
 
   console.log(ppSecondCardCombos);
 
-  return ppSecondCardCombos.length;
+  return ppSecondCardCombos;
 }
 
 // ME FALTA CHEQUEAR CUANDO PP ES MENOR A MINCARDBOARD
@@ -863,11 +971,11 @@ function weakPair() {
 
   console.log(weakPairCombosList)
 
-  return weakPairCombosList.length;
+  return weakPairCombosList;
 }
 
-function middlePair() {
-  var middlePairCombosList = [];
+function aceHigh(){
+  var aceHighCombos = [];
   var selectedCards = Object.keys(boardSeleccionado);
 
   for (var hand in combosPorMano) {
@@ -888,35 +996,82 @@ function middlePair() {
           cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
         }
 
-        var maxBoardCardValue = Math.max(...selectedCards.map(getCardValue));
-        var minBoardCardValue = Math.min(...selectedCards.map(getCardValue));
-        var hasOtherHighCard = false;
+        if(getCardValue(combo[0]) === 14 || getCardValue(combo[1]) === 14){
 
+        
+        var hasOtherHighCard = false;
 
         for (var j = 0; j < allCards.length; j++) {
           var cardValue = getCardValue(allCards[j]);
-
-          if(cardFrequencies[cardValue] === 2 && cardValue !== maxBoardCardValue && cardValue !== minBoardCardValue && cardFrequencies[cardValue] >= 2){
+          if(cardFrequencies[cardValue] === 4 || getCardValue(combo[0]) === getCardValue(combo[1])){
             hasOtherHighCard = true;
             break;
           }
         }
 
-        if (hasOtherHighCard) {
-          middlePairCombosList.push(combo);
+        if (!hasOtherHighCard) {
+          aceHighCombos.push(combo);
         }
         
       }
     }
+    }
   }
 
-  console.log(middlePairCombosList);
+  
 
-  return middlePairCombosList.length;
+  return aceHighCombos;
 }
 
+function nothing(){
+  var totalCombos = [];
+  var nothingCombos = [];
+  var setCombos = set();
+  var straightCombos = straight();
+  var twoPairCombo = twoPair();
+  var overpairCombo = overpair();
+  var topPairCombos = topPair();
+  var ppTCombos = ppTopCard();
+  var ppSCombos = ppSecondCard();
+  var weakPairCombos = weakPair();
+  var midPairCombos = middlePair();
+  var aceHighCombos = aceHigh();
+  var fullCombos = full();
+  var flushCombos = flush();
 
+  totalCombos.push(setCombos)
+  totalCombos.push(straightCombos)
+  totalCombos.push(twoPairCombo)
+  totalCombos.push(overpairCombo)
+  totalCombos.push(topPairCombos)
+  totalCombos.push(ppTCombos)
+  totalCombos.push(ppSCombos)
+  totalCombos.push(weakPairCombos)
+  totalCombos.push(midPairCombos)
+  totalCombos.push(aceHighCombos)
+  totalCombos.push(fullCombos)
+  totalCombos.push(flushCombos)
 
+  for (var hand in combosPorMano) {
+    if (combosPorMano.hasOwnProperty(hand)) {
+      var combos = combosPorMano[hand][0];
+      for (var i = 0; i < combos.length; i++) {
+        var combo = combos[i];
+
+        // Verificar si el combo está presente en totalCombos (en alguna de las cadenas internas)
+        var comboEncontrado = totalCombos.some(innerArray => innerArray.includes(combo));
+        
+        // Si el combo no está presente en ninguna cadena interna de totalCombos, lo agregamos a nothingCombos
+        if (!comboEncontrado) {
+          nothingCombos.push(combo);
+        }
+      }
+    }
+  }
+  return nothingCombos;
+}
+
+/*
 var isButtonActive1 = false;
 var isButtonActive2 = false;
 var isButtonActive3 = false;
@@ -926,25 +1081,14 @@ var isButtonActive6 = false;
 var isButtonActive7 = false;
 var isButtonActive8 = false;
 var isButtonActive9 = false;
-
-
-
-
-
+var isButtonActive10 = false;
+var isButtonActive11 = false;
+var isButtonActive12 = false;
+var isButtonActive13 = false;
 
 function toggleSet(){
   var iconElement = document.getElementById('icon2');
   var passFilter = document.getElementById("passFilter");
-
-  var totalCombos = actualizarTotal();
-  var setCombos = set();
-
-  var actualPercent = 0;
-  var actualSumOfCombos = 0;
-
-  actualPercent = setCombos/totalCombos;
-  actualSumOfCombos = setCombos;
-
 
   if (isButtonActive2) {
     // Si el botón está activo, restaurar el color original
@@ -953,6 +1097,14 @@ function toggleSet(){
   // Esto restablecerá el color a su valor predeterminado (normalmente negro)
   } else {
     // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var setCombos = set();
+
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+
+    actualPercent = setCombos.length/totalCombos;
+    actualSumOfCombos = setCombos.length;
     iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
     passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
   }
@@ -966,16 +1118,6 @@ function toggleStraight(){
   var iconElement = document.getElementById('icon1');
   var passFilter = document.getElementById("passFilter");
 
-  var totalCombos = actualizarTotal();
-  var straightCombos = straight();
-
-  var actualPercent = 0;
-  var actualSumOfCombos = 0;
-
-  actualPercent = straightCombos/totalCombos;
-  actualSumOfCombos = straightCombos;
-
-
   if (isButtonActive1) {
     // Si el botón está activo, restaurar el color original
     iconElement.style.color = '';
@@ -983,6 +1125,14 @@ function toggleStraight(){
   // Esto restablecerá el color a su valor predeterminado (normalmente negro)
   } else {
     // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var straightCombos = straight();
+
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+
+    actualPercent = straightCombos.length/totalCombos;
+    actualSumOfCombos = straightCombos.length;
     iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
     passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
   }
@@ -995,16 +1145,6 @@ function toggleTwoPairs(){
   var iconElement = document.getElementById('icon3');
   var passFilter = document.getElementById("passFilter");
 
-  var totalCombos = actualizarTotal();
-  var twoPairCombo = twoPair();
-
-  var actualPercent = 0;
-  var actualSumOfCombos = 0;
-
-  actualPercent = twoPairCombo/totalCombos;
-  actualSumOfCombos = twoPairCombo;
-
-
   if (isButtonActive3) {
     // Si el botón está activo, restaurar el color original
     iconElement.style.color = '';
@@ -1012,6 +1152,16 @@ function toggleTwoPairs(){
   // Esto restablecerá el color a su valor predeterminado (normalmente negro)
   } else {
     // Si el botón está inactivo, cambiar el color a uno específico
+
+    var totalCombos = actualizarTotal();
+    var twoPairCombo = twoPair();
+  
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+  
+    actualPercent = twoPairCombo.length/totalCombos;
+    actualSumOfCombos = twoPairCombo.length;
+
     iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
     passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
   }
@@ -1024,16 +1174,6 @@ function toggleOverpair(){
   var iconElement = document.getElementById('icon4');
   var passFilter = document.getElementById("passFilter");
 
-  var totalCombos = actualizarTotal();
-  var overpairCombo = overpair();
-
-  var actualPercent = 0;
-  var actualSumOfCombos = 0;
-
-  actualPercent = overpairCombo/totalCombos;
-  actualSumOfCombos = overpairCombo;
-
-
   if (isButtonActive4) {
     // Si el botón está activo, restaurar el color original
     iconElement.style.color = '';
@@ -1041,6 +1181,15 @@ function toggleOverpair(){
   // Esto restablecerá el color a su valor predeterminado (normalmente negro)
   } else {
     // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var overpairCombo = overpair();
+  
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+  
+    actualPercent = overpairCombo.length/totalCombos;
+    actualSumOfCombos = overpairCombo.length;
+
     iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
     passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
   }
@@ -1054,16 +1203,6 @@ function toggleTopPair(){
   var iconElement = document.getElementById('icon5');
   var passFilter = document.getElementById("passFilter");
 
-  var totalCombos = actualizarTotal();
-  var topPairCombos = topPair();
-
-  var actualPercent = 0;
-  var actualSumOfCombos = 0;
-
-  actualPercent = topPairCombos/totalCombos;
-  actualSumOfCombos = topPairCombos;
-
-
   if (isButtonActive5) {
     // Si el botón está activo, restaurar el color original
     iconElement.style.color = '';
@@ -1071,6 +1210,15 @@ function toggleTopPair(){
   // Esto restablecerá el color a su valor predeterminado (normalmente negro)
   } else {
     // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var topPairCombos = topPair();
+  
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+  
+    actualPercent = topPairCombos.length/totalCombos;
+    actualSumOfCombos = topPairCombos.length;
+
     iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
     passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
   }
@@ -1083,16 +1231,6 @@ function togglePpTopCard(){
   var iconElement = document.getElementById('icon6');
   var passFilter = document.getElementById("passFilter");
 
-  var totalCombos = actualizarTotal();
-  var ppTCombos = ppTopCard();
-
-  var actualPercent = 0;
-  var actualSumOfCombos = 0;
-
-  actualPercent = ppTCombos/totalCombos;
-  actualSumOfCombos = ppTCombos;
-
-
   if (isButtonActive6) {
     // Si el botón está activo, restaurar el color original
     iconElement.style.color = '';
@@ -1100,6 +1238,15 @@ function togglePpTopCard(){
   // Esto restablecerá el color a su valor predeterminado (normalmente negro)
   } else {
     // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var ppTCombos = ppTopCard();
+  
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+  
+    actualPercent = ppTCombos.length/totalCombos;
+    actualSumOfCombos = ppTCombos.length;
+
     iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
     passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
   }
@@ -1112,16 +1259,6 @@ function togglePpSecondCard(){
   var iconElement = document.getElementById('icon8');
   var passFilter = document.getElementById("passFilter");
 
-  var totalCombos = actualizarTotal();
-  var ppSCombos = ppSecondCard();
-
-  var actualPercent = 0;
-  var actualSumOfCombos = 0;
-
-  actualPercent = ppSCombos/totalCombos;
-  actualSumOfCombos = ppSCombos;
-
-
   if (isButtonActive8) {
     // Si el botón está activo, restaurar el color original
     iconElement.style.color = '';
@@ -1129,6 +1266,15 @@ function togglePpSecondCard(){
   // Esto restablecerá el color a su valor predeterminado (normalmente negro)
   } else {
     // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var ppSCombos = ppSecondCard();
+  
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+  
+    actualPercent = ppSCombos.length/totalCombos;
+    actualSumOfCombos = ppSCombos.length;
+
     iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
     passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
   }
@@ -1141,16 +1287,6 @@ function toggleWeakPair(){
   var iconElement = document.getElementById('icon9');
   var passFilter = document.getElementById("passFilter");
 
-  var totalCombos = actualizarTotal();
-  var weakPairCombos = weakPair();
-
-  var actualPercent = 0;
-  var actualSumOfCombos = 0;
-
-  actualPercent = weakPairCombos/totalCombos;
-  actualSumOfCombos = weakPairCombos;
-
-
   if (isButtonActive9) {
     // Si el botón está activo, restaurar el color original
     iconElement.style.color = '';
@@ -1158,6 +1294,15 @@ function toggleWeakPair(){
   // Esto restablecerá el color a su valor predeterminado (normalmente negro)
   } else {
     // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var weakPairCombos = weakPair();
+  
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+  
+    actualPercent = weakPairCombos.length/totalCombos;
+    actualSumOfCombos = weakPairCombos.length;
+
     iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
     passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
   }
@@ -1170,16 +1315,6 @@ function toggleMidPair(){
   var iconElement = document.getElementById('icon7');
   var passFilter = document.getElementById("passFilter");
 
-  var totalCombos = actualizarTotal();
-  var midPairCombos = middlePair();
-
-  var actualPercent = 0;
-  var actualSumOfCombos = 0;
-
-  actualPercent = midPairCombos/totalCombos;
-  actualSumOfCombos = midPairCombos;
-
-
   if (isButtonActive7) {
     // Si el botón está activo, restaurar el color original
     iconElement.style.color = '';
@@ -1187,6 +1322,15 @@ function toggleMidPair(){
   // Esto restablecerá el color a su valor predeterminado (normalmente negro)
   } else {
     // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var midPairCombos = middlePair();
+  
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+  
+    actualPercent = midPairCombos.length/totalCombos;
+    actualSumOfCombos = midPairCombos.length;
+
     iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
     passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
   }
@@ -1194,6 +1338,207 @@ function toggleMidPair(){
   // Alternar el estado del botón
   isButtonActive7 = !isButtonActive7;
 }
+
+function toggleAceHigh(){
+  var iconElement = document.getElementById('icon10');
+  var passFilter = document.getElementById("passFilter");
+
+  if (isButtonActive10) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var aceHighCombos = aceHigh();
+  
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+  
+  
+    actualPercent = aceHighCombos.length/totalCombos;
+    actualSumOfCombos = aceHighCombos.length;
+
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+
+  // Alternar el estado del botón
+  isButtonActive10 = !isButtonActive10;
+}
+
+function toggleFull(){
+  var iconElement = document.getElementById('icon12');
+  var passFilter = document.getElementById("passFilter");
+
+  if (isButtonActive12) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var fullCombos = full();
+  
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+  
+    actualPercent = fullCombos.length/totalCombos;
+    actualSumOfCombos = fullCombos.length;
+
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+  
+
+  // Alternar el estado del botón
+  isButtonActive12 = !isButtonActive12;
+}
+
+function toggleFlush(){
+  var iconElement = document.getElementById('icon13');
+  var passFilter = document.getElementById("passFilter");
+
+  if (isButtonActive13) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var flushCombos = flush();
+  
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+  
+    actualPercent = flushCombos.length/totalCombos;
+    actualSumOfCombos = flushCombos.length;
+
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+
+  // Alternar el estado del botón
+  isButtonActive13 = !isButtonActive13;
+}
+
+function toggleNothing(){
+  var iconElement = document.getElementById('icon11');
+  var passFilter = document.getElementById("passFilter");
+
+  if (isButtonActive11) {
+    // Si el botón está activo, restaurar el color original
+    iconElement.style.color = '';
+    passFilter.innerHTML = 'Combos that pass the filters: 0';
+  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
+  } else {
+    // Si el botón está inactivo, cambiar el color a uno específico
+    var totalCombos = actualizarTotal();
+    var nothingCombos = nothing();
+  
+    var actualPercent = 0;
+    var actualSumOfCombos = 0;
+  
+    actualPercent = nothingCombos.length/totalCombos;
+    actualSumOfCombos = nothingCombos.length;
+
+    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
+    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
+  }
+
+  // Alternar el estado del botón
+  isButtonActive11 = !isButtonActive11;
+}
+*/
+var isButtonActive = {}; // Objeto para mantener el estado de cada botón por su ID
+
+// Aquí puedes definir la cantidad total de botones que tienes
+const totalButtons = 13;
+
+// Inicializar todos los botones como inactivos
+for (var i = 1; i <= totalButtons; i++) {
+  isButtonActive['button' + i] = false;
+}
+
+function toggleButton(buttonId) {
+  var iconElement = document.getElementById('icon' + buttonId);
+  var passFilter = document.getElementById('passFilter');
+
+  // Alternar el estado del botón
+  isButtonActive['button' + buttonId] = !isButtonActive['button' + buttonId];
+  if (isButtonActive['button' + buttonId]) {
+    iconElement.style.color = '#5484FF'; // Cambia aquí al color deseado al hacer clic
+  } else {
+    iconElement.style.color = ''; // Restablecer el color a su valor predeterminado (normalmente negro)
+  }
+  // Llamar a la función para calcular los combos
+  calculateCombos();
+
+  // Resto del código para cambiar el color del botón y actualizar el 'passFilter'
+}
+
+function calculateCombos() {
+  var totalCombos = actualizarTotal();
+  var activeComboLists = [];
+
+  // Obtener las listas de combos para los botones activos
+  for (var i = 1; i <= totalButtons; i++) {
+    if (isButtonActive['button' + i]) {
+      var combosList = getCombosListForButton(i); // Esta función obtiene los combos según el botón
+      activeComboLists.push(combosList);
+    }
+  }
+
+  // Unir las listas de combos en una sola lista sin duplicados
+  var combinedCombos = activeComboLists.flat().filter((combo, index, self) => self.indexOf(combo) === index);
+
+  // Calcular el porcentaje y la suma total de combos
+  var actualPercent = combinedCombos.length / totalCombos;
+  var actualSumOfCombos = combinedCombos.length;
+
+  // Actualizar el texto en el elemento 'passFilter' con la suma de combos
+  var passFilter = document.getElementById('passFilter');
+  passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent * 100).toFixed(2) + '%)';
+}
+
+// Función de ejemplo para obtener los combos según el botón (debes personalizarla según tu implementación)
+function getCombosListForButton(buttonId) {
+  // Aquí debes implementar la lógica para obtener los combos según el botón presionado
+  // Retorna una lista de combos
+  // Por ejemplo:
+  if (buttonId === 1) {
+    return straight();
+  } else if (buttonId === 2) {
+    return set();
+  } else if (buttonId === 3) {
+    return twoPair();
+  } else if (buttonId === 4) {
+    return overpair();
+  } else if (buttonId === 5) {
+    return topPair();
+  } else if (buttonId === 6) {
+    return ppTopCard();
+  } else if (buttonId === 7) {
+    return middlePair();
+  } else if (buttonId === 8) {
+    return ppSecondCard();
+  } else if (buttonId === 9) {
+    return weakPair();
+  } else if (buttonId === 10) {
+    return aceHigh();
+  } else if (buttonId === 11) {
+    return nothing();
+  } else if (buttonId === 12) {
+    return full();
+  } else if (buttonId === 13) {
+    return flush();
+  }
+  // Resto de los casos para los otros botones
+}
+
 
 // disenio
 
