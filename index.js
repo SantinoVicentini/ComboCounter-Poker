@@ -648,10 +648,14 @@ function twoPair(){
     }
   }
 
+  console.log(twoPairCombos)
+
+
   return twoPairCombos;
 
 }
 
+// chequear que overpair sean pp
 function overpair() {
   var overPairCombos = [];
   var selectedCards = Object.keys(boardSeleccionado);
@@ -686,6 +690,8 @@ function overpair() {
       }
     }
   }
+
+  console.log(overPairCombos)
 
   return overPairCombos;
 }
@@ -1023,6 +1029,7 @@ function aceHigh(){
     }
   }
 
+  console.log(aceHighCombos)
   
 
   return aceHighCombos;
