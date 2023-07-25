@@ -318,7 +318,6 @@ function clearSelectionAndImages() {
     });
 
     passFilter.innerHTML = 'Combos that pass the filters: 0'
-
   }
   
 // combos por mano
@@ -440,7 +439,7 @@ function full(){
         }
       }
 
-        if ((trios === 1 && pairs === 1) || ((trios === 1 || pairs === 1) && quads === 1)) {
+        if ((trios === 1 && pairs >= 1) || ((trios === 1 || pairs === 1) && quads === 1)) {
           fullCombos.push(combo);
         }
         
@@ -464,6 +463,7 @@ function flush(){
       var combos = combosPorMano[hand][0];
       for (var i = 0; i < combos.length; i++) {
         var combo = combos[i];
+
 
         var allCards = combo.concat(selectedCards).sort(function(a, b) {
           var cardValueA = getCardPalo(a);
@@ -841,12 +841,18 @@ function middlePair() {
         var maxBoardCardValue = Math.max(...selectedCards.map(getCardValue));
         var minBoardCardValue = Math.min(...selectedCards.map(getCardValue));
         var hasOtherHighCard = false;
+        var countOver = 0;
+        if(getCardValue(combo[0]) === getCardValue(combo[1])){
+          if(getCardValue(combo[0]) > maxBoardCardValue || getCardValue(combo[0]) < minBoardCardValue){
+            countOver++;
+          }
+        }
 
 
         for (var j = 0; j < allCards.length; j++) {
           var cardValue = getCardValue(allCards[j]);
 
-          if(cardFrequencies[cardValue] === 2 && cardValue !== maxBoardCardValue && cardValue !== minBoardCardValue && cardFrequencies[cardValue] >= 2){
+          if(cardFrequencies[cardValue] === 2 && cardValue !== maxBoardCardValue && cardValue !== minBoardCardValue && countOver === 0){
             hasOtherHighCard = true;
             break;
           }
@@ -929,7 +935,6 @@ function ppSecondCard() {
   return ppSecondCardCombos;
 }
 
-// ME FALTA CHEQUEAR CUANDO PP ES MENOR A MINCARDBOARD
 function weakPair() {
   var weakPairCombosList = [];
   var selectedCards = Object.keys(boardSeleccionado);
@@ -952,11 +957,11 @@ function weakPair() {
         }
 
         var minBoardCardValue = Math.min(...selectedCards.map(getCardValue));
-        if (cardFrequencies[minBoardCardValue] === 2) {
+        if (cardFrequencies[minBoardCardValue] === 2 || ((getCardValue(combo[0]) === getCardValue(combo[1])) && getCardValue(combo[0]) < minBoardCardValue)) {
           var hasOtherminCard = false;
           for (var j = 0; j < allCards.length; j++) {
             var cardValue = getCardValue(allCards[j]);
-            if (cardValue !== minBoardCardValue && cardFrequencies[cardValue] >= 2) {
+            if ((cardValue > minBoardCardValue && cardFrequencies[cardValue] >= 2)) {
               hasOtherminCard = true;
               break;
             }
@@ -996,7 +1001,7 @@ function aceHigh(){
           cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
         }
 
-        if(getCardValue(combo[0]) === 14 || getCardValue(combo[1]) === 14){
+        if((getCardValue(combo[0]) === 14 || getCardValue(combo[1]) === 14) && cardFrequencies[getCardValue(combo[0])] < 2){
 
         
         var hasOtherHighCard = false;
@@ -1476,7 +1481,6 @@ function toggleButton(buttonId) {
   }
   // Llamar a la función para calcular los combos
   calculateCombos();
-
   // Resto del código para cambiar el color del botón y actualizar el 'passFilter'
 }
 
@@ -1539,6 +1543,7 @@ function getCombosListForButton(buttonId) {
   // Resto de los casos para los otros botones
 }
 
+// Llamar a la función al cargar la página para inicializar las barras de progreso
 
 // disenio
 
