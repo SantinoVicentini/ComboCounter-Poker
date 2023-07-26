@@ -318,10 +318,11 @@ function clearSelectionAndImages() {
     });
 
     passFilter.innerHTML = 'Combos that pass the filters: 0'
+    
   }
   
 // combos por mano
-function discountCombos() {
+function discountCombos(card) {
     var totalElement = document.getElementById("total");
     var filterBox = document.getElementById("filterTotal");
 
@@ -329,11 +330,12 @@ function discountCombos() {
   
     // Obtener la suma de combos seleccionados por mano
     // Eliminar combos que contengan cartas del board
-    for (var card in boardSeleccionado) {
-        if (boardSeleccionado.hasOwnProperty(card) && boardSeleccionado[card]) {
+    
+      
           for (var hand in combosPorMano) {
             if (combosPorMano.hasOwnProperty(hand)) {
               var combos = combosPorMano[hand][0];
+              console.log(combos)
               var filteredCombos = [];
       
               for (var i = 0; i < combos.length; i++) {
@@ -345,10 +347,6 @@ function discountCombos() {
               combosPorMano[hand] = [filteredCombos]; // Asignar el nuevo array modificado a combosPorMano[hand]
             }
           }
-        }
-      }
-      
-      
     
   
     // Calcular el total de combos modificados por mano
@@ -359,9 +357,8 @@ function discountCombos() {
       }
     }
   
-    totalElement.innerHTML = total + ' combos en rango preflop';
+    totalElement.innerHTML = total + ' Combos en rango preflop';
     filterBox.innerHTML = 'Total number of combos: ' + total
-
   }
 
 function getCardValue(card) {
@@ -585,18 +582,25 @@ function set() {
             cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
           }
    
-          var flushCount = 0;
           console.log(cardFrequencies)
-  
-          for (let hand in cardFrequencies) {
-            if(cardFrequencies.hasOwnProperty(hand)){ 
-              if(cardFrequencies[hand] === 3){
-              flushCount++;
+          var trioCount = 0;
+          var count = 0;
+
+
+          for (var j = 0; j < allCards.length; j++) {
+              var cardValue = getCardValue(allCards[j]);
+              if (cardFrequencies[cardValue] === 3) {
+                trioCount++;
+              } else if(cardFrequencies[cardValue] === 2 || cardFrequencies[cardValue] === 4){
+                count++;
+              }
             }
-          }
-        }
+          
+          console.log(trioCount)
+          console.log(count)
+
   
-          if (flushCount === 1) {
+          if(trioCount === 3 && count === 0){
             trioCombos.push(combo);
           }
           
@@ -655,7 +659,6 @@ function twoPair(){
 
 }
 
-// chequear que overpair sean pp
 function overpair() {
   var overPairCombos = [];
   var selectedCards = Object.keys(boardSeleccionado);
@@ -677,14 +680,24 @@ function overpair() {
           cardFrequencies[cardValue] = (cardFrequencies[cardValue] || 0) + 1;
         }
         console.log(cardFrequencies)
-        var countTwo = 0;
-        for (var value in cardFrequencies) {
-          if (cardFrequencies.hasOwnProperty(value) && cardFrequencies[value] === 2) {
-            countTwo++;
-          }
-        }
+        var maxBoardCardValue = Math.max(...selectedCards.map(getCardValue));
+        console.log(getCardValue(combo[0]));
+        console.log(getCardValue(combo[1]));
 
-        if (countTwo === 1 && hasOverPair(combo, selectedCards)) {
+        var check = false
+
+        
+        for (var j = 0; j < allCards.length; j++) {
+            var cardValue = getCardValue(allCards[j]);
+            if (cardValue <= maxBoardCardValue && cardFrequencies[cardValue] >= 2) {
+              check = true;
+              break;
+            }
+        }
+        
+        
+
+        if (!check && (getCardValue(combo[0]) === getCardValue(combo[1]))) {
           overPairCombos.push(combo);
         }
       }
@@ -694,11 +707,6 @@ function overpair() {
   console.log(overPairCombos)
 
   return overPairCombos;
-}
-
-function hasOverPair(combo, boardCards) {
-  var maxBoardCardValue = Math.max(...boardCards.map(getCardValue));
-  return combo.every(card => getCardValue(card) > maxBoardCardValue);
 }
 
 function topPair() {
@@ -770,7 +778,7 @@ function ppTopCard() {
   var selectedCards = Object.keys(boardSeleccionado);
 
   if (isBoardPaired(selectedCards)) {
-    return ppTopCardCombos.length; // Si el board está emparejado, no hay pocket pairs posibles
+    return ppTopCardCombos; // Si el board está emparejado, no hay pocket pairs posibles
   }
 
   for (var hand in combosPorMano) {
@@ -882,7 +890,7 @@ function ppSecondCard() {
   var selectedCards = Object.keys(boardSeleccionado);
 
   if (isBoardPaired(selectedCards)) {
-    return ppSecondCardCombos.length; // Si el board está emparejado, no hay pocket pairs posibles
+    return ppSecondCardCombos; // Si el board está emparejado, no hay pocket pairs posibles
   }
 
   // Obtener la segunda carta más alta del board
@@ -1014,7 +1022,7 @@ function aceHigh(){
 
         for (var j = 0; j < allCards.length; j++) {
           var cardValue = getCardValue(allCards[j]);
-          if(cardFrequencies[cardValue] === 4 || getCardValue(combo[0]) === getCardValue(combo[1])){
+          if(cardFrequencies[cardValue] === 4 || cardFrequencies[getCardValue(combo[1])] === 3 || cardFrequencies[getCardValue(combo[1])] === 2 || getCardValue(combo[0]) === getCardValue(combo[1])){
             hasOtherHighCard = true;
             break;
           }
@@ -1080,394 +1088,12 @@ function nothing(){
       }
     }
   }
+  console.log(nothingCombos)
   return nothingCombos;
 }
 
-/*
-var isButtonActive1 = false;
-var isButtonActive2 = false;
-var isButtonActive3 = false;
-var isButtonActive4 = false;
-var isButtonActive5 = false;
-var isButtonActive6 = false;
-var isButtonActive7 = false;
-var isButtonActive8 = false;
-var isButtonActive9 = false;
-var isButtonActive10 = false;
-var isButtonActive11 = false;
-var isButtonActive12 = false;
-var isButtonActive13 = false;
-
-function toggleSet(){
-  var iconElement = document.getElementById('icon2');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive2) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var setCombos = set();
-
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-
-    actualPercent = setCombos.length/totalCombos;
-    actualSumOfCombos = setCombos.length;
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive2 = !isButtonActive2;
-}
-
-
-function toggleStraight(){
-  var iconElement = document.getElementById('icon1');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive1) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var straightCombos = straight();
-
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-
-    actualPercent = straightCombos.length/totalCombos;
-    actualSumOfCombos = straightCombos.length;
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive1 = !isButtonActive1;
-}
-
-function toggleTwoPairs(){
-  var iconElement = document.getElementById('icon3');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive3) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-
-    var totalCombos = actualizarTotal();
-    var twoPairCombo = twoPair();
-  
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-  
-    actualPercent = twoPairCombo.length/totalCombos;
-    actualSumOfCombos = twoPairCombo.length;
-
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive3 = !isButtonActive3;
-}
-
-function toggleOverpair(){
-  var iconElement = document.getElementById('icon4');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive4) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var overpairCombo = overpair();
-  
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-  
-    actualPercent = overpairCombo.length/totalCombos;
-    actualSumOfCombos = overpairCombo.length;
-
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive4 = !isButtonActive4;
-}
-
-
-function toggleTopPair(){
-  var iconElement = document.getElementById('icon5');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive5) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var topPairCombos = topPair();
-  
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-  
-    actualPercent = topPairCombos.length/totalCombos;
-    actualSumOfCombos = topPairCombos.length;
-
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive5 = !isButtonActive5;
-}
-
-function togglePpTopCard(){
-  var iconElement = document.getElementById('icon6');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive6) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var ppTCombos = ppTopCard();
-  
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-  
-    actualPercent = ppTCombos.length/totalCombos;
-    actualSumOfCombos = ppTCombos.length;
-
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive6 = !isButtonActive6;
-}
-
-function togglePpSecondCard(){
-  var iconElement = document.getElementById('icon8');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive8) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var ppSCombos = ppSecondCard();
-  
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-  
-    actualPercent = ppSCombos.length/totalCombos;
-    actualSumOfCombos = ppSCombos.length;
-
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive8 = !isButtonActive8;
-}
-
-function toggleWeakPair(){
-  var iconElement = document.getElementById('icon9');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive9) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var weakPairCombos = weakPair();
-  
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-  
-    actualPercent = weakPairCombos.length/totalCombos;
-    actualSumOfCombos = weakPairCombos.length;
-
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive9 = !isButtonActive9;
-}
-
-function toggleMidPair(){
-  var iconElement = document.getElementById('icon7');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive7) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var midPairCombos = middlePair();
-  
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-  
-    actualPercent = midPairCombos.length/totalCombos;
-    actualSumOfCombos = midPairCombos.length;
-
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive7 = !isButtonActive7;
-}
-
-function toggleAceHigh(){
-  var iconElement = document.getElementById('icon10');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive10) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var aceHighCombos = aceHigh();
-  
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-  
-  
-    actualPercent = aceHighCombos.length/totalCombos;
-    actualSumOfCombos = aceHighCombos.length;
-
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive10 = !isButtonActive10;
-}
-
-function toggleFull(){
-  var iconElement = document.getElementById('icon12');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive12) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var fullCombos = full();
-  
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-  
-    actualPercent = fullCombos.length/totalCombos;
-    actualSumOfCombos = fullCombos.length;
-
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-  
-
-  // Alternar el estado del botón
-  isButtonActive12 = !isButtonActive12;
-}
-
-function toggleFlush(){
-  var iconElement = document.getElementById('icon13');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive13) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var flushCombos = flush();
-  
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-  
-    actualPercent = flushCombos.length/totalCombos;
-    actualSumOfCombos = flushCombos.length;
-
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive13 = !isButtonActive13;
-}
-
-function toggleNothing(){
-  var iconElement = document.getElementById('icon11');
-  var passFilter = document.getElementById("passFilter");
-
-  if (isButtonActive11) {
-    // Si el botón está activo, restaurar el color original
-    iconElement.style.color = '';
-    passFilter.innerHTML = 'Combos that pass the filters: 0';
-  // Esto restablecerá el color a su valor predeterminado (normalmente negro)
-  } else {
-    // Si el botón está inactivo, cambiar el color a uno específico
-    var totalCombos = actualizarTotal();
-    var nothingCombos = nothing();
-  
-    var actualPercent = 0;
-    var actualSumOfCombos = 0;
-  
-    actualPercent = nothingCombos.length/totalCombos;
-    actualSumOfCombos = nothingCombos.length;
-
-    iconElement.style.color = '#5484FF'; // Cambia 'red' por el color deseado al hacer clic
-    passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent*100).toFixed(2) + '%)';
-  }
-
-  // Alternar el estado del botón
-  isButtonActive11 = !isButtonActive11;
-}
-*/
 var isButtonActive = {}; // Objeto para mantener el estado de cada botón por su ID
 
-// Aquí puedes definir la cantidad total de botones que tienes
 const totalButtons = 13;
 
 // Inicializar todos los botones como inactivos
