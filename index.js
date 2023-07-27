@@ -639,11 +639,12 @@ function twoPair(){
 
         var countTwo = 0;
         for (var value in cardFrequencies) {
-          if (cardFrequencies.hasOwnProperty(value) && cardFrequencies[value] === 2) {
+          if (cardFrequencies.hasOwnProperty(value) && cardFrequencies[getCardValue(combo[0])] === 2 && cardFrequencies[getCardValue(combo[1])] === 2) {
             countTwo++;
           }
         }
 
+        console.log(countTwo)
         if(countTwo === 2 || countTwo === 3){
           twoPairCombos.push(combo);
         }
@@ -689,7 +690,7 @@ function overpair() {
         
         for (var j = 0; j < allCards.length; j++) {
             var cardValue = getCardValue(allCards[j]);
-            if (cardValue <= maxBoardCardValue && cardFrequencies[cardValue] >= 2) {
+            if (cardValue <= maxBoardCardValue && cardFrequencies[cardValue] >= 3) {
               check = true;
               break;
             }
@@ -830,15 +831,27 @@ function ppTopCard() {
   return ppTopCardCombos;
 }
 
+
 function middlePair() {
+  var totalCombos = [];
   var middlePairCombosList = [];
+  var fullCombos = full();
+  var twoPairCombos = twoPair();
+
   var selectedCards = Object.keys(boardSeleccionado);
+
+  totalCombos.push(fullCombos)
+  totalCombos.push(twoPairCombos)
+
 
   for (var hand in combosPorMano) {
     if (combosPorMano.hasOwnProperty(hand)) {
       var combos = combosPorMano[hand][0];
       for (var i = 0; i < combos.length; i++) {
         var combo = combos[i];
+        var comboEncontrado = totalCombos.some(innerArray => innerArray.includes(combo));
+        var comboEncontrado2 = totalCombos.some(innerArray => innerArray.includes(combo));
+
 
         var allCards = combo.concat(selectedCards).sort(function(a, b) {
           var cardValueA = getCardValue(a);
@@ -861,18 +874,33 @@ function middlePair() {
             countOver++;
           }
         }
+        var card1 = getCardValue(combo[0]);
+        var card2 = getCardValue(combo[1]);
+        var count1 = 0;
+        var count2 = 0;
 
+
+        if(cardFrequencies[card1] === 2 && card1 < maxBoardCardValue && card1 > minBoardCardValue){
+          count1++;
+        }
+        if(cardFrequencies[card2] === 2 && card2 < maxBoardCardValue && card2 > minBoardCardValue){
+          count2++;
+        }
+
+        console.log(count1)
+        console.log(count2)
+        var totall = count1 + count2
 
         for (var j = 0; j < allCards.length; j++) {
           var cardValue = getCardValue(allCards[j]);
 
-          if(cardFrequencies[cardValue] === 2 && cardValue !== maxBoardCardValue && cardValue !== minBoardCardValue && countOver === 0){
+          if(cardFrequencies[cardValue] === 3 && cardValue !== card1 && cardValue !== card2 && countOver === 0){
             hasOtherHighCard = true;
             break;
           }
         }
 
-        if (hasOtherHighCard) {
+        if (!hasOtherHighCard && totall === 1 && !comboEncontrado && !comboEncontrado2) {
           middlePairCombosList.push(combo);
         }
         
@@ -1117,6 +1145,8 @@ function toggleButton(buttonId) {
   // Resto del código para cambiar el color del botón y actualizar el 'passFilter'
 }
 
+var passedCombos = [];
+
 function calculateCombos() {
   var totalCombos = actualizarTotal();
   var activeComboLists = [];
@@ -1139,6 +1169,8 @@ function calculateCombos() {
   // Actualizar el texto en el elemento 'passFilter' con la suma de combos
   var passFilter = document.getElementById('passFilter');
   passFilter.innerHTML = 'Combos that pass the filters: ' + actualSumOfCombos + ' (' + (actualPercent * 100).toFixed(2) + '%)';
+
+  passedCombos = combinedCombos;
 }
 
 // Función de ejemplo para obtener los combos según el botón (debes personalizarla según tu implementación)
@@ -1201,4 +1233,15 @@ function toggleColorCard(element) {
         element.classList.toggle('selected-spade');
     }
 }
+
+// Agregar el evento mouseover al elemento 'passFilter'
+var passFilter = document.getElementById('passFilter');
+passFilter.addEventListener('mouseover', showPassedCombos);
+
+// Función para mostrar los combos que pasan el filtro al pasar el cursor sobre el elemento
+function showPassedCombos() {
+  var passedCombosText = passedCombos.join(', ');
+  alert('Combos that pass the filters: ' + passedCombosText);
+}
+
 

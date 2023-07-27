@@ -240,3 +240,45 @@ td {
     text-align: center;
     margin-bottom: -17px;
 }
+
+.suit-selection {
+    margin-left: 0.3%;
+    margin-top: 4%;
+    height: 200px;
+    width: 500px;
+    background-color: #ececec;
+    border-radius: 4px;
+    box-shadow: 0 0 30px #000000;
+    justify-content: space-around;
+    align-items: center;
+    display: flex;
+}
+
+.select1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    width: 150px;
+    background-color: #232323;
+}
+
+.select2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    width: 150px;
+    background-color: #232323;
+
+}
+
+.select3 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    width: 150px;
+    background-color: #232323;
+
+}
